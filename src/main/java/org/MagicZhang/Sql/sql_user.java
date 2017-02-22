@@ -4,7 +4,13 @@ import org.MagicZhang.Sql.Util.jdbcUtils;
 import java.sql.*;
 
 public class sql_user{
-    public static user query_userbyphonenumber(String phone_number){
+    private String phone_number;
+    private user _user;// as a buffer,but no effect for concurrence
+    public sql_user(String phone_number){
+        this.phone_number=phone_number;
+        _user=query_byphonenumber(phone_number);
+    }
+    public static user query_byphonenumber(String phone_number){
         Connection conn=null;
         Statement st = null;
         ResultSet rs=null;
@@ -57,7 +63,7 @@ public class sql_user{
         }
         return issuccess;
     }
-    public static boolean update_userbylocation(String user_id,String last_updatetime
+    public synchronized boolean update_location(String last_updatetime
     ,String last_updatelocation){
         Connection conn=null;
         Statement st=null;
@@ -67,7 +73,8 @@ public class sql_user{
             conn=jdbcUtils.getConnection();
             st=conn.createStatement();
             String sql="update users set last_updatetime='"+last_updatetime
-            +"',last_updatelocation='"+last_updatelocation+"'where user_id='"+user_id+"'";
+            +"',last_updatelocation='"+last_updatelocation+"'where phone_number='"
+                    +phone_number+"'";
             int num=st.executeUpdate(sql);
             if(num>0){
                 issuccess=true;
@@ -80,7 +87,74 @@ public class sql_user{
         }
         return issuccess;
     }
-    public static boolean delete_userbyphonenumber(String phone_number){
+    public synchronized boolean update_helpnumber(int offset){
+        Connection conn=null;
+        Statement st=null;
+        ResultSet rs=null;
+        boolean issuccess=false;
+        try {
+            conn=jdbcUtils.getConnection();
+            st=conn.createStatement();
+            int tmp_helpnumber=_user.help_number()+offset;
+            String sql="update users set helpnumber="+tmp_helpnumber
+                    +"where phone_number='"+phone_number+"'";
+            int num=st.executeUpdate(sql);
+            if(num>0){
+                issuccess=true;
+                _user.update_helpnumber(offset);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }finally{
+            jdbcUtils.release(conn, st, rs);
+        }
+        return issuccess;
+    }
+    public synchronized boolean update_requestnumber(int offset){
+        Connection conn=null;
+        Statement st=null;
+        ResultSet rs=null;
+        boolean issuccess=false;
+        try {
+            conn=jdbcUtils.getConnection();
+            st=conn.createStatement();
+            int tmp_requestnumber=_user.request_number()+offset;
+            String sql="update users set requestnumber="+tmp_requestnumber
+                    +"where phone_number='"+phone_number+"'";
+            int num=st.executeUpdate(sql);
+            if(num>0){
+                issuccess=true;
+                _user.update_requestnumber(offset);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }finally{
+            jdbcUtils.release(conn, st, rs);
+        }
+        return issuccess;
+    }
+    public synchronized boolean update_isonline(Byte isonline){
+        Connection conn=null;
+        Statement st=null;
+        ResultSet rs=null;
+        boolean issuccess=false;
+        try {
+            conn=jdbcUtils.getConnection();
+            st=conn.createStatement();
+            String sql="update users set isonline="+isonline
+                    +"where phone_number='"+phone_number+"'";
+            int num=st.executeUpdate(sql);
+            if(num>0){
+                issuccess=true;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }finally{
+            jdbcUtils.release(conn, st, rs);
+        }
+        return issuccess;
+    }
+    public static boolean delete_byphonenumber(String phone_number){
         Connection conn=null;
         Statement st=null;
         ResultSet rs=null;

@@ -8,7 +8,7 @@ import java.sql.*;
  * Created by sonof on 2017/2/21.
  */
 public class sql_task {
-    public static task query_taskbytaskid(String task_id){
+    public static task query_bytaskid(String task_id){
         Connection conn=null;
         Statement st = null;
         ResultSet rs=null;
@@ -62,7 +62,7 @@ public class sql_task {
         }
         return issuccess;
     }
-    public static boolean update_taskbyack(String task_id,String volunteer_phone_number,
+    public static boolean update_ack(String task_id,String volunteer_phone_number,
                                            String acktime,String acklocation){
         Connection conn=null;
         Statement st=null;
@@ -86,7 +86,7 @@ public class sql_task {
         }
         return issuccess;
     }
-    public static boolean delete_taskbytaskid(String task_id){
+    public static boolean delete_bytaskid(String task_id){
         Connection conn=null;
         Statement st=null;
         ResultSet rs=null;

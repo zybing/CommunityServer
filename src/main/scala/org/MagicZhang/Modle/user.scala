@@ -13,4 +13,6 @@ class user(_phone_number:String,_usertype:Byte,_last_updatetime:String
   var help_number=_help_number
   var request_number=_request_number
   var isonline=_isonline
+  def update_helpnumber(offset:Int) {help_number+=offset}
+  def update_requestnumber(offset:Int) {request_number+=offset}
 }
