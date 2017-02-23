@@ -3,6 +3,7 @@ package org.MagicZhang.Control;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -18,6 +19,9 @@ public class servicecenter extends Thread{
     public int THREAD_NUM =serverinfo.THREAD_NUM;
     public HashMap<String,sql_user> online_users=new
             HashMap<String,sql_user>();
+    public ArrayList<servicethread> onlineservices=new
+            ArrayList<servicethread>();
+    private static servicecenter myself;
     public servicecenter(){
         ExecutorService pool = Executors.newFixedThreadPool(THREAD_NUM);
         try(ServerSocket server = new ServerSocket(PORT)) {
@@ -33,6 +37,12 @@ public class servicecenter extends Thread{
         } catch (IOException ex) {
             System.err.println("Couldn't start server");
         }
+    }
+    public static servicecenter getinstance(){
+        if(myself==null){
+            myself=new servicecenter();
+        }
+        return myself;
     }
     public synchronized void addonline_users(String phone_number,sql_user online_user){
         online_users.put(phone_number,online_user);

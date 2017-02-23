@@ -23,9 +23,9 @@ public class servicethread implements Callable<Void> {
     public Void call(){
         try {
             out = new BufferedWriter(new OutputStreamWriter(
-                    connection.getOutputStream()));
+                    connection.getOutputStream(),"UTF-8"));
             in=new BufferedReader(new InputStreamReader(
-                    connection.getInputStream()));
+                    connection.getInputStream(),"UTF-8"));
             while(true){
                 String value=in.readLine();
                 execute_cs(value,out);
