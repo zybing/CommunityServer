@@ -1,8 +1,10 @@
 package org.MagicZhang.Control;
 
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
+import org.MagicZhang.Logic.Logic;
+import org.MagicZhang.Modle.user;
+import org.MagicZhang.Sql.sql_user;
+
+import java.io.*;
 import java.net.Socket;
 import java.util.concurrent.Callable;
 
@@ -12,15 +14,58 @@ import java.util.concurrent.Callable;
 public class servicethread implements Callable<Void> {
     private String phone_number;
     private Socket connection;
+    private BufferedWriter out;
+    private BufferedReader in;
     public servicethread(Socket connection) {
         this.connection = connection;
     }
     @Override
-    public Void call() throws Exception {
-        while (true){
-            if(true)
-                break;
+    public Void call(){
+        try {
+            out = new BufferedWriter(new OutputStreamWriter(
+                    connection.getOutputStream()));
+            in=new BufferedReader(new InputStreamReader(
+                    connection.getInputStream()));
+            while(true){
+                String value=in.readLine();
+                execute_cs(value,out);
+            }
+        } catch (IOException e) {
+            //ignore
+        }
+        finally {
+            try {
+                connection.close();
+            } catch (IOException e) {
+                // ignore;
+            }
         }
         return null;
+    }
+    public void execute_cs(String value,BufferedWriter out){
+        if(value==null)
+            return;
+        String[] infos=value.split("\\s+");
+        int info1=Integer.parseInt(infos[0]);
+        if(info1== Logic.login){
+            String phone_number=infos[1];
+            Logic.login(phone_number,out);
+        }
+    }
+    public void finish(){
+        if(in!=null){
+            try {
+                in.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        if(out!=null){
+            try {
+                out.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }
