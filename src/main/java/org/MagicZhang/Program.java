@@ -7,6 +7,6 @@ import org.MagicZhang.Control.servicecenter;
  */
 public class Program {
     public static void main(String[] args){
-        servicecenter.getinstance();
+        servicecenter.getinstance().start();
     }
 }

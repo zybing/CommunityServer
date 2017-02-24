@@ -5,7 +5,7 @@ import java.sql.*;
 
 public class sql_user{
     private String phone_number;
-    private user _user;// as a buffer,but no effect for concurrence
+    public user _user;// as a buffer,but no effect for concurrence
     public sql_user(String phone_number){
         this.phone_number=phone_number;
         _user=query_byphonenumber(phone_number);
@@ -134,6 +134,8 @@ public class sql_user{
         return issuccess;
     }
     public synchronized boolean update_isonline(Byte isonline){
+        if(isonline==_user.isonline())
+            return true;
         Connection conn=null;
         Statement st=null;
         ResultSet rs=null;

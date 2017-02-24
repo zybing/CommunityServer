@@ -16,8 +16,11 @@ public class servicethread implements Callable<Void> {
     private Socket connection;
     private BufferedWriter out;
     private BufferedReader in;
+    public sql_user _sql_user;
+    public boolean isfinish=false;
     public servicethread(Socket connection) {
         this.connection = connection;
+
     }
     @Override
     public Void call(){
@@ -28,16 +31,23 @@ public class servicethread implements Callable<Void> {
                     connection.getInputStream(),"UTF-8"));
             while(true){
                 String value=in.readLine();
+                if(value==null)
+                {
+                    System.out.println("server:socketthread finished"+phone_number);
+                    break;
+                }
+                System.out.println(value);
                 execute_cs(value,out);
             }
         } catch (IOException e) {
-            //ignore
+            System.out.println("server:socketthread finished"+phone_number);
         }
         finally {
             try {
+                if(connection!=null)
                 connection.close();
             } catch (IOException e) {
-                // ignore;
+                isfinish=true;
             }
         }
         return null;
@@ -49,7 +59,11 @@ public class servicethread implements Callable<Void> {
         int info1=Integer.parseInt(infos[0]);
         if(info1== Logic.login){
             String phone_number=infos[1];
-            Logic.login(phone_number,out);
+            if(_sql_user==null)
+                _sql_user= new sql_user(phone_number);
+            if(this.phone_number==null)
+                this.phone_number=phone_number;
+            Logic.login(phone_number,out,_sql_user._user,this);
         }
     }
     public void finish(){
