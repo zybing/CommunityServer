@@ -6,7 +6,9 @@ import org.MagicZhang.Control.servicecenter;
  * Created by sonof on 2017/2/23.
  */
 public class Program {
+
     public static void main(String[] args){
-        servicecenter.getinstance().start();
+        servicecenter _servicecenter=servicecenter.getinstance();
+        _servicecenter.start();
     }
 }

@@ -20,23 +20,10 @@ public class servicecenter extends Thread{
     public int THREAD_NUM =serverinfo.THREAD_NUM;
     public HashMap<String,servicethread> online_users=new
             HashMap<String,servicethread>();
+    private garbagefactory _garbagefactory;
     private static servicecenter myself;
     public servicecenter(){
-        ExecutorService pool = Executors.newFixedThreadPool(THREAD_NUM);
-        try(ServerSocket server = new ServerSocket(PORT)) {
-            while (true) {
-                try {
-                    Socket connection = server.accept();
-                    connection.setSoTimeout(serverinfo.OUTTIME);
-                    Callable<Void> task = new servicethread(connection);
-                    pool.submit(task);
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                }
-            }
-        } catch (IOException ex) {
-            System.err.println("Couldn't start server");
-        }
+        _garbagefactory=new garbagefactory();
     }
     public static servicecenter getinstance(){
         if(myself==null){
@@ -46,6 +33,7 @@ public class servicecenter extends Thread{
     }
     public synchronized void addonline_users(String phone_number,servicethread st){
         servicethread tmp=online_users.put(phone_number,st);
+        System.out.println("add users num:"+online_users.size());
         st._sql_user.update_isonline((byte)1);
         if(tmp!=null){
             tmp.finish();
@@ -60,22 +48,45 @@ public class servicecenter extends Thread{
             online_users.remove(phone_number);
         }
     }
-    @Override
+
     public void run(){
-        while(true){
-            try {
-                Iterator iter = online_users.entrySet().iterator();
-                while (iter.hasNext()) {
-                    Map.Entry entry = (Map.Entry) iter.next();
-                    String key = (String)entry.getKey();
-                    servicethread val = (servicethread)entry.getValue();
-                    if(val.isfinish){
-                        online_users.remove(key);
-                    }
+        ExecutorService pool = Executors.newFixedThreadPool(THREAD_NUM);
+        try(ServerSocket server = new ServerSocket(PORT)) {
+            _garbagefactory.start();
+            while (true) {
+                try {
+                    Socket connection = server.accept();
+                    connection.setSoTimeout(serverinfo.OUTTIME);
+                    Callable<Void> task = new servicethread(connection);
+                    pool.submit(task);
+                } catch (IOException ex) {
+                    ex.printStackTrace();
                 }
-                Thread.sleep(5000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+            }
+        } catch (IOException ex) {
+            System.err.println("Couldn't start server");
+        }
+    }
+
+    public class garbagefactory extends Thread{
+        @Override
+        public void run(){
+            while(true){
+                try {
+                    System.out.println("online num:"+online_users.size());
+                    Iterator iter = online_users.entrySet().iterator();
+                    while (iter.hasNext()) {
+                        Map.Entry entry = (Map.Entry) iter.next();
+                        String key = (String)entry.getKey();
+                        servicethread val = (servicethread)entry.getValue();
+                        if(val.isfinish){
+                            removeoffline_users(key);
+                        }
+                    }
+                    Thread.sleep(5000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }

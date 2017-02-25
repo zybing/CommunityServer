@@ -25,7 +25,7 @@ public class Logic {
                 sql_user.insert_user(new user(phone_number,(byte)4,
                         "0000-00-00 00:00:01","0,0"
                 ,0,0,(byte)0));
-                //System.out.println("add unregisster user"+phone_number+"0 0");
+                System.out.println("add unregisster user"+phone_number+"0 0");
                 thread.finish();
             } catch (IOException e) {
                 e.printStackTrace();
@@ -37,7 +37,8 @@ public class Logic {
                         +_user.request_number()+"\r\n");
                 out.flush();
                 if(_user.user_type()!=4){
-                    servicecenter.getinstance().addonline_users(phone_number,thread);
+                    servicecenter myself=servicecenter.getinstance();
+                    myself.addonline_users(phone_number,thread);
                 }
                 else{
                     thread.finish();

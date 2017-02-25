@@ -33,21 +33,22 @@ public class servicethread implements Callable<Void> {
                 String value=in.readLine();
                 if(value==null)
                 {
-                    System.out.println("server:socketthread finished"+phone_number);
+                    System.out.println("server:socketthread finished "+phone_number);
                     break;
                 }
                 System.out.println(value);
                 execute_cs(value,out);
             }
         } catch (IOException e) {
-            System.out.println("server:socketthread finished"+phone_number);
+            System.out.println("server:socketthread finished "+phone_number);
         }
         finally {
             try {
+                isfinish=true;
                 if(connection!=null)
                 connection.close();
             } catch (IOException e) {
-                isfinish=true;
+                e.printStackTrace();
             }
         }
         return null;

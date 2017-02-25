@@ -73,7 +73,7 @@ public class sql_user{
             conn=jdbcUtils.getConnection();
             st=conn.createStatement();
             String sql="update users set last_updatetime='"+last_updatetime
-            +"',last_updatelocation='"+last_updatelocation+"'where phone_number='"
+            +"',last_updatelocation='"+last_updatelocation+"' where phone_number='"
                     +phone_number+"'";
             int num=st.executeUpdate(sql);
             if(num>0){
@@ -97,7 +97,7 @@ public class sql_user{
             st=conn.createStatement();
             int tmp_helpnumber=_user.help_number()+offset;
             String sql="update users set helpnumber="+tmp_helpnumber
-                    +"where phone_number='"+phone_number+"'";
+                    +" where phone_number='"+phone_number+"'";
             int num=st.executeUpdate(sql);
             if(num>0){
                 issuccess=true;
@@ -144,7 +144,7 @@ public class sql_user{
             conn=jdbcUtils.getConnection();
             st=conn.createStatement();
             String sql="update users set isonline="+isonline
-                    +"where phone_number='"+phone_number+"'";
+                    +" where phone_number='"+phone_number+"'";
             int num=st.executeUpdate(sql);
             if(num>0){
                 issuccess=true;

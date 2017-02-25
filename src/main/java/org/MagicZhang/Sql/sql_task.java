@@ -73,7 +73,7 @@ public class sql_task {
             st=conn.createStatement();
             String sql="update tasks set volunteer_phone_number='"+volunteer_phone_number
                     +"',acktime='"+acktime+"',acklocation='"+acklocation+
-                    "'where task_id='"+task_id+"'";
+                    "' where task_id='"+task_id+"'";
             int num=st.executeUpdate(sql);
             if(num>0){
                 issuccess=true;
