@@ -3,10 +3,7 @@ package org.MagicZhang.Control;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -33,10 +30,14 @@ public class servicecenter extends Thread{
     }
     public synchronized void addonline_users(String phone_number,servicethread st){
         servicethread tmp=online_users.put(phone_number,st);
-        System.out.println("add users num:"+online_users.size());
+        System.out.println(new Date()+":add users "+phone_number+" "+st);
         st._sql_user.update_isonline((byte)1);
         if(tmp!=null){
-            tmp.finish();
+            if(!tmp.isfinish)
+            {
+                System.out.println(new Date()+":try finish "+tmp);
+                tmp.finish();
+            }
         }
     }
     public synchronized void removeoffline_users(String phone_number){
@@ -64,7 +65,7 @@ public class servicecenter extends Thread{
                 }
             }
         } catch (IOException ex) {
-            System.err.println("Couldn't start server");
+            System.err.println(new Date()+":Couldn't start server");
         }
     }
 
@@ -73,7 +74,7 @@ public class servicecenter extends Thread{
         public void run(){
             while(true){
                 try {
-                    System.out.println("online num:"+online_users.size());
+                    System.out.println(new Date()+":online num:"+online_users.size());
                     Iterator iter = online_users.entrySet().iterator();
                     while (iter.hasNext()) {
                         Map.Entry entry = (Map.Entry) iter.next();

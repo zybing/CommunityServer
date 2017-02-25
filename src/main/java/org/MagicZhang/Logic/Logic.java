@@ -5,6 +5,8 @@ import org.MagicZhang.Sql.sql_user;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.util.Date;
+
 import org.MagicZhang.Control.*;
 
 /**
@@ -25,7 +27,7 @@ public class Logic {
                 sql_user.insert_user(new user(phone_number,(byte)4,
                         "0000-00-00 00:00:01","0,0"
                 ,0,0,(byte)0));
-                System.out.println("add unregisster user"+phone_number+"0 0");
+                System.out.println(new Date()+":add unregisster user"+phone_number+"0 0");
                 thread.finish();
             } catch (IOException e) {
                 e.printStackTrace();

@@ -6,6 +6,7 @@ import org.MagicZhang.Sql.sql_user;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.Date;
 import java.util.concurrent.Callable;
 
 /**
@@ -33,14 +34,14 @@ public class servicethread implements Callable<Void> {
                 String value=in.readLine();
                 if(value==null)
                 {
-                    System.out.println("server:socketthread finished "+phone_number);
+                    System.out.println(new Date()+":server:socketthread finished "+ phone_number+" "+this);
                     break;
                 }
-                System.out.println(value);
+                System.out.println(new Date()+":"+value+" login "+this);
                 execute_cs(value,out);
             }
         } catch (IOException e) {
-            System.out.println("server:socketthread finished "+phone_number);
+            System.out.println(new Date()+":server:socketthread finished "+ phone_number+" "+this);
         }
         finally {
             try {
