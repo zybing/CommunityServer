@@ -17,10 +17,10 @@ public class servicecenter extends Thread{
     public int THREAD_NUM =serverinfo.THREAD_NUM;
     public HashMap<String,servicethread> online_users=new
             HashMap<String,servicethread>();
-    private garbagefactory _garbagefactory;
+    //private garbagefactory _garbagefactory;
     private static servicecenter myself;
     public servicecenter(){
-        _garbagefactory=new garbagefactory();
+        //_garbagefactory=new garbagefactory();
     }
     public static servicecenter getinstance(){
         if(myself==null){
@@ -31,6 +31,7 @@ public class servicecenter extends Thread{
     public synchronized void addonline_users(String phone_number,servicethread st){
         servicethread tmp=online_users.put(phone_number,st);
         System.out.println(new Date()+":add users "+phone_number+" "+st);
+        System.out.println(new Date()+":online num:"+online_users.size());
         st._sql_user.update_isonline((byte)1);
         if(tmp!=null){
             if(!tmp.isfinish)
@@ -38,22 +39,41 @@ public class servicecenter extends Thread{
                 System.out.println(new Date()+":try finish "+tmp);
                 tmp.finish();
             }
+            else{
+                System.out.println(new Date()+":"+tmp+"has been finished");
+            }
+        }
+        else{
+            System.out.println(new Date()+":this user is first been added");
         }
     }
-    public synchronized void removeoffline_users(String phone_number){
+    public synchronized void removeoffline_users(String phone_number,servicethread old_thread){
         servicethread st=online_users.get(phone_number);
         if(st!=null){
-            st._sql_user.update_isonline((byte)0);
-            if(!st.isfinish)
-                st.finish();
-            online_users.remove(phone_number);
+            if(old_thread==st)
+            {
+                st._sql_user.update_isonline((byte)0);
+                if(!st.isfinish)
+                    st.finish();
+                online_users.remove(phone_number);
+                System.out.println(new Date()+":remove users "+phone_number+" "+st);
+                System.out.println(new Date()+":online num:"+online_users.size());
+            }
+            else{
+                System.out.println(new Date()+":user "+phone_number+" "+old_thread+"has been removed");
+                System.out.println(new Date()+":online num:"+online_users.size());
+            }
+        }
+        else{
+            System.out.println(new Date()+":no user is been removed");
+            System.out.println(new Date()+":online num:"+online_users.size());
         }
     }
 
     public void run(){
         ExecutorService pool = Executors.newFixedThreadPool(THREAD_NUM);
         try(ServerSocket server = new ServerSocket(PORT)) {
-            _garbagefactory.start();
+            //_garbagefactory.start();
             while (true) {
                 try {
                     Socket connection = server.accept();
@@ -81,7 +101,7 @@ public class servicecenter extends Thread{
                         String key = (String)entry.getKey();
                         servicethread val = (servicethread)entry.getValue();
                         if(val.isfinish){
-                            removeoffline_users(key);
+                            //removeoffline_users(key);
                         }
                     }
                     Thread.sleep(5000);

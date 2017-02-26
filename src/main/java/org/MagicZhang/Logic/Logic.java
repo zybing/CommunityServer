@@ -13,7 +13,10 @@ import org.MagicZhang.Control.*;
  * Created by sonof on 2017/2/22.
  */
 public class Logic {
+    //operator type
     public final static int login=1;
+    public final static int heartbeat=2;
+    //user_type
     public final static int requester=1;
     public final static int volunteer=2;
     public final static int req_vol=3;
@@ -49,5 +52,8 @@ public class Logic {
                 e.printStackTrace();
             }
         }
+    }
+    public static final void hearbeat(String latitude,String longitude){
+
     }
 }

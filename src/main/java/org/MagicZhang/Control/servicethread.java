@@ -45,9 +45,10 @@ public class servicethread implements Callable<Void> {
         }
         finally {
             try {
-                isfinish=true;
                 if(connection!=null)
                 connection.close();
+                isfinish=true;
+                servicecenter.getinstance().removeoffline_users(phone_number,this);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -66,6 +67,11 @@ public class servicethread implements Callable<Void> {
             if(this.phone_number==null)
                 this.phone_number=phone_number;
             Logic.login(phone_number,out,_sql_user._user,this);
+        }
+        else if(info1==Logic.heartbeat){
+            String location=infos[1];
+            String[] args=location.split(",");
+            Logic.hearbeat(args[0],args[1]);
         }
     }
     public void finish(){
