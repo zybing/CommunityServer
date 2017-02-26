@@ -78,9 +78,10 @@ public class sql_user{
             int num=st.executeUpdate(sql);
             if(num>0){
                 issuccess=true;
+                _user.last_updatetime_$eq(last_updatetime);
+                _user.last_updatelocation_$eq(last_updatelocation);
             }
         } catch (SQLException e) {
-
             e.printStackTrace();
         }finally{
             jdbcUtils.release(conn, st, rs);
@@ -148,6 +149,7 @@ public class sql_user{
             int num=st.executeUpdate(sql);
             if(num>0){
                 issuccess=true;
+                _user.isonline_$eq(isonline);
             }
         } catch (SQLException e) {
             e.printStackTrace();

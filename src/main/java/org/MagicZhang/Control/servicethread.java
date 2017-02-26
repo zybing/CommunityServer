@@ -37,7 +37,7 @@ public class servicethread implements Callable<Void> {
                     System.out.println(new Date()+":server:socketthread finished "+ phone_number+" "+this);
                     break;
                 }
-                System.out.println(new Date()+":"+value+" login "+this);
+                System.out.println(new Date()+":"+value+" "+this);
                 execute_cs(value,out);
             }
         } catch (IOException e) {
@@ -70,8 +70,7 @@ public class servicethread implements Callable<Void> {
         }
         else if(info1==Logic.heartbeat){
             String location=infos[1];
-            String[] args=location.split(",");
-            Logic.hearbeat(args[0],args[1]);
+            Logic.hearbeat(location,_sql_user,out);
         }
     }
     public void finish(){

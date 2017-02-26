@@ -44,7 +44,7 @@ public class servicecenter extends Thread{
             }
         }
         else{
-            System.out.println(new Date()+":this user is first been added");
+            System.out.println(new Date()+":this phoner_number user is first been added");
         }
     }
     public synchronized void removeoffline_users(String phone_number,servicethread old_thread){
