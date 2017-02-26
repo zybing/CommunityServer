@@ -25,7 +25,8 @@ public class Logic {
                                    user _user,servicethread thread){
         if(_user==null){
             try {
-                out.write(unregister+"\r\n");//unregister
+                out.write(Logic.login+" "+unregister+" "+_user.help_number()+" "
+                        +_user.request_number()+"\r\n");//unregister
                 out.flush();
                 sql_user.insert_user(new user(phone_number,(byte)4,
                         "0000-00-00 00:00:01","0,0"
@@ -38,7 +39,7 @@ public class Logic {
         }
         else{
             try {
-                out.write(_user.user_type()+" "+_user.help_number()+" "
+                out.write(Logic.login+" "+_user.user_type()+" "+_user.help_number()+" "
                         +_user.request_number()+"\r\n");
                 out.flush();
                 if(_user.user_type()!=4){
