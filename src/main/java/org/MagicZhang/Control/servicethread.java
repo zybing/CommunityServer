@@ -19,9 +19,10 @@ public class servicethread implements Callable<Void> {
     private BufferedReader in;
     public sql_user _sql_user;
     public boolean isfinish=false;
-    public servicethread(Socket connection) {
+    private int threadid;
+    public servicethread(Socket connection,int _threadid) {
         this.connection = connection;
-
+        threadid=_threadid;
     }
     @Override
     public Void call(){

@@ -1,5 +1,6 @@
 package org.MagicZhang;
 
+import org.MagicZhang.Control.ThreadId;
 import org.MagicZhang.Control.servicecenter;
 
 /**

@@ -18,9 +18,11 @@ public class servicecenter extends Thread{
     public HashMap<String,servicethread> online_users=new
             HashMap<String,servicethread>();
     //private garbagefactory _garbagefactory;
+    private ThreadId _threadid;
     private static servicecenter myself;
     public servicecenter(){
         //_garbagefactory=new garbagefactory();
+        _threadid=new ThreadId(10000);
     }
     public static servicecenter getinstance(){
         if(myself==null){
@@ -78,7 +80,7 @@ public class servicecenter extends Thread{
                 try {
                     Socket connection = server.accept();
                     connection.setSoTimeout(serverinfo.OUTTIME);
-                    Callable<Void> task = new servicethread(connection);
+                    Callable<Void> task = new servicethread(connection,_threadid.getnextid());
                     pool.submit(task);
                 } catch (IOException ex) {
                     ex.printStackTrace();
