@@ -15,13 +15,11 @@ import org.MagicZhang.serverinfo;
 public class servicecenter extends Thread{
     public int PORT =serverinfo.PORT;
     public int THREAD_NUM =serverinfo.THREAD_NUM;
-    public HashMap<String,servicethread> online_users=new
-            HashMap<String,servicethread>();
-    //private garbagefactory _garbagefactory;
+    public HashMap<String,serviceserver> online_users=new
+            HashMap<String,serviceserver>();
     private ThreadId _threadid;
     private static servicecenter myself;
     public servicecenter(){
-        //_garbagefactory=new garbagefactory();
         _threadid=new ThreadId(10000);
     }
     public static servicecenter getinstance(){
@@ -30,8 +28,8 @@ public class servicecenter extends Thread{
         }
         return myself;
     }
-    public synchronized void addonline_users(String phone_number,servicethread st){
-        servicethread tmp=online_users.put(phone_number,st);
+    public synchronized void addonline_users(String phone_number,serviceserver st){
+        serviceserver tmp=online_users.put(phone_number,st);
         System.out.println(new Date()+":add users "+phone_number+" "+st);
         System.out.println(new Date()+":online num:"+online_users.size());
         st._sql_user.update_isonline((byte)1);
@@ -49,8 +47,8 @@ public class servicecenter extends Thread{
             System.out.println(new Date()+":this phoner_number user is first been added");
         }
     }
-    public synchronized void removeoffline_users(String phone_number,servicethread old_thread){
-        servicethread st=online_users.get(phone_number);
+    public synchronized void removeoffline_users(String phone_number,serviceserver old_thread){
+        serviceserver st=online_users.get(phone_number);
         if(st!=null){
             if(old_thread==st)
             {
@@ -80,7 +78,7 @@ public class servicecenter extends Thread{
                 try {
                     Socket connection = server.accept();
                     connection.setSoTimeout(serverinfo.OUTTIME);
-                    Callable<Void> task = new servicethread(connection,_threadid.getnextid());
+                    Callable<Void> task = new serviceserver(connection,_threadid.getnextid());
                     pool.submit(task);
                 } catch (IOException ex) {
                     ex.printStackTrace();
@@ -91,26 +89,4 @@ public class servicecenter extends Thread{
         }
     }
 
-    public class garbagefactory extends Thread{
-        @Override
-        public void run(){
-            while(true){
-                try {
-                    System.out.println(new Date()+":online num:"+online_users.size());
-                    Iterator iter = online_users.entrySet().iterator();
-                    while (iter.hasNext()) {
-                        Map.Entry entry = (Map.Entry) iter.next();
-                        String key = (String)entry.getKey();
-                        servicethread val = (servicethread)entry.getValue();
-                        if(val.isfinish){
-                            //removeoffline_users(key);
-                        }
-                    }
-                    Thread.sleep(5000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
 }

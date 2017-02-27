@@ -8,6 +8,7 @@ import org.MagicZhang.Control.servicecenter;
  */
 public class Program {
 
+    //here we use phone_number as login token,maybe leading to big error
     public static void main(String[] args){
         servicecenter _servicecenter=servicecenter.getinstance();
         _servicecenter.start();

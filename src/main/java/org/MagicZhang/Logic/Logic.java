@@ -24,7 +24,7 @@ public class Logic {
     public final static int unregister=4;
     public static SimpleDateFormat sdf= new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");;
     public static final void login(String phone_number,BufferedWriter out,
-                                   user _user,servicethread thread){
+                                   user _user,serviceserver thread){
         if(phone_number!=null){
             if(_user==null){
                 try {

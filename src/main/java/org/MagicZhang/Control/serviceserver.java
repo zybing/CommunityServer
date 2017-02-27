@@ -12,7 +12,7 @@ import java.util.concurrent.Callable;
 /**
  * Created by sonof on 2017/2/21.
  */
-public class servicethread implements Callable<Void> {
+public class serviceserver implements Callable<Void> {
     private String phone_number;
     private Socket connection;
     private BufferedWriter out;
@@ -20,7 +20,7 @@ public class servicethread implements Callable<Void> {
     public sql_user _sql_user;
     public boolean isfinish=false;
     private int threadid;
-    public servicethread(Socket connection,int _threadid) {
+    public serviceserver(Socket connection, int _threadid) {
         this.connection = connection;
         threadid=_threadid;
     }
