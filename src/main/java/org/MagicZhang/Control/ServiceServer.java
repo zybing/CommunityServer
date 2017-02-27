@@ -1,7 +1,7 @@
 package org.MagicZhang.Control;
 
 import org.MagicZhang.Logic.Logic;
-import org.MagicZhang.Sql.sql_user;
+import org.MagicZhang.Sql.Sql_user;
 
 import java.io.*;
 import java.net.Socket;
@@ -16,7 +16,7 @@ public class ServiceServer implements Callable<Void> {
     private Socket connection;
     private BufferedWriter out;
     private BufferedReader in;
-    public sql_user _sql_user;
+    public Sql_user _sql_user;
     public boolean isfinish=false;
     private int threadid;
     public ServiceServer(Socket connection, int _threadid) {
@@ -63,7 +63,7 @@ public class ServiceServer implements Callable<Void> {
         if(info1== Logic.login){
             String phone_number=infos[1];
             if(_sql_user==null)
-                _sql_user= new sql_user(phone_number);
+                _sql_user= new Sql_user(phone_number);
             if(this.phone_number==null)
                 this.phone_number=phone_number;
             Logic.login(phone_number,out,_sql_user._user,this);

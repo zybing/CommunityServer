@@ -1,7 +1,7 @@
 package org.MagicZhang.Logic;
 
 import org.MagicZhang.Modle.user;
-import org.MagicZhang.Sql.sql_user;
+import org.MagicZhang.Sql.Sql_user;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -31,7 +31,7 @@ public class Logic {
                     out.write(Logic.login+" "+unregister+" "+0+" "
                         +0+"\r\n");//unregister
                     out.flush();
-                    sql_user.insert_user(new user(phone_number,(byte)4,
+                    Sql_user.insert_user(new user(phone_number,(byte)4,
                         "0000-00-00 00:00:01","0,0"
                     ,0,0,(byte)0));
                     System.out.println(new Date()+":add unregisster user "+phone_number);
@@ -61,7 +61,7 @@ public class Logic {
             System.out.println(new Date()+":phone_number is null");
         }
     }
-    public static final void hearbeat(String location,sql_user _sql_user,BufferedWriter out){
+    public static final void hearbeat(String location, Sql_user _sql_user, BufferedWriter out){
         if(location!=null){
             if(_sql_user._user!=null){
                 try {

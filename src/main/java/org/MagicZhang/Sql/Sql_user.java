@@ -3,10 +3,10 @@ import org.MagicZhang.Modle.user;
 import org.MagicZhang.Sql.Util.jdbcUtils;
 import java.sql.*;
 
-public class sql_user{
+public class Sql_user {
     private String phone_number;
     public user _user;// as a buffer,but no effect for concurrence
-    public sql_user(String phone_number){
+    public Sql_user(String phone_number){
         this.phone_number=phone_number;
         _user=query_byphonenumber(phone_number);
     }

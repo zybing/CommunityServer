@@ -7,7 +7,7 @@ import java.sql.*;
 /**
  * Created by sonof on 2017/2/21.
  */
-public class sql_task {
+public class Sql_task {
     public static task query_bytaskid(String task_id){
         Connection conn=null;
         Statement st = null;
