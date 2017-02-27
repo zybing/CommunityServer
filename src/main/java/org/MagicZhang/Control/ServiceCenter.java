@@ -8,28 +8,28 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import org.MagicZhang.serverinfo;
+import org.MagicZhang.ServerInfo;
 /**
  * Created by sonof on 2017/2/21.
  */
-public class servicecenter extends Thread{
-    public int PORT =serverinfo.PORT;
-    public int THREAD_NUM =serverinfo.THREAD_NUM;
-    public HashMap<String,serviceserver> online_users=new
-            HashMap<String,serviceserver>();
+public class ServiceCenter extends Thread{
+    public int PORT = ServerInfo.PORT;
+    public int THREAD_NUM = ServerInfo.THREAD_NUM;
+    public HashMap<String,ServiceServer> online_users=new
+            HashMap<String,ServiceServer>();
     private ThreadId _threadid;
-    private static servicecenter myself;
-    public servicecenter(){
+    private static ServiceCenter myself;
+    public ServiceCenter(){
         _threadid=new ThreadId(10000);
     }
-    public static servicecenter getinstance(){
+    public static ServiceCenter getinstance(){
         if(myself==null){
-            myself=new servicecenter();
+            myself=new ServiceCenter();
         }
         return myself;
     }
-    public synchronized void addonline_users(String phone_number,serviceserver st){
-        serviceserver tmp=online_users.put(phone_number,st);
+    public synchronized void addonline_users(String phone_number,ServiceServer st){
+        ServiceServer tmp=online_users.put(phone_number,st);
         System.out.println(new Date()+":add users "+phone_number+" "+st);
         System.out.println(new Date()+":online num:"+online_users.size());
         st._sql_user.update_isonline((byte)1);
@@ -47,8 +47,8 @@ public class servicecenter extends Thread{
             System.out.println(new Date()+":this phoner_number user is first been added");
         }
     }
-    public synchronized void removeoffline_users(String phone_number,serviceserver old_thread){
-        serviceserver st=online_users.get(phone_number);
+    public synchronized void removeoffline_users(String phone_number,ServiceServer old_thread){
+        ServiceServer st=online_users.get(phone_number);
         if(st!=null){
             if(old_thread==st)
             {
@@ -77,15 +77,15 @@ public class servicecenter extends Thread{
             while (true) {
                 try {
                     Socket connection = server.accept();
-                    connection.setSoTimeout(serverinfo.OUTTIME);
-                    Callable<Void> task = new serviceserver(connection,_threadid.getnextid());
+                    connection.setSoTimeout(ServerInfo.OUTTIME);
+                    Callable<Void> task = new ServiceServer(connection,_threadid.getnextid());
                     pool.submit(task);
                 } catch (IOException ex) {
                     ex.printStackTrace();
                 }
             }
         } catch (IOException ex) {
-            System.err.println(new Date()+":Couldn't start server");
+            System.err.println(new Date()+":Couldn't start login server");
         }
     }
 

@@ -2,7 +2,7 @@ package org.MagicZhang.Sql.Util;
 
 import java.sql.*;
 
-import org.MagicZhang.dbinfo;
+import org.MagicZhang.DbInfo;
 
 public class jdbcUtils {
     private static String driver=null;
@@ -10,10 +10,10 @@ public class jdbcUtils {
     private static String username=null;
     private static String password=null;
     static{
-        driver=dbinfo.driver;
-        url=dbinfo.url;
-        username=dbinfo.username;
-        password=dbinfo.password;
+        driver= DbInfo.driver;
+        url= DbInfo.url;
+        username= DbInfo.username;
+        password= DbInfo.password;
         try {
             Class.forName(driver);
         } catch (ClassNotFoundException e) {

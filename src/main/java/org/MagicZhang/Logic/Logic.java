@@ -24,7 +24,7 @@ public class Logic {
     public final static int unregister=4;
     public static SimpleDateFormat sdf= new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");;
     public static final void login(String phone_number,BufferedWriter out,
-                                   user _user,serviceserver thread){
+                                   user _user,ServiceServer thread){
         if(phone_number!=null){
             if(_user==null){
                 try {
@@ -46,7 +46,7 @@ public class Logic {
                         +_user.request_number()+"\r\n");
                     out.flush();
                     if(_user.user_type()!=4){
-                        servicecenter myself=servicecenter.getinstance();
+                        ServiceCenter myself= ServiceCenter.getinstance();
                         myself.addonline_users(phone_number,thread);
                     }
                     else{

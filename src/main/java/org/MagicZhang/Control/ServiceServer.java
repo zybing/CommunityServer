@@ -1,7 +1,6 @@
 package org.MagicZhang.Control;
 
 import org.MagicZhang.Logic.Logic;
-import org.MagicZhang.Modle.user;
 import org.MagicZhang.Sql.sql_user;
 
 import java.io.*;
@@ -12,7 +11,7 @@ import java.util.concurrent.Callable;
 /**
  * Created by sonof on 2017/2/21.
  */
-public class serviceserver implements Callable<Void> {
+public class ServiceServer implements Callable<Void> {
     private String phone_number;
     private Socket connection;
     private BufferedWriter out;
@@ -20,7 +19,7 @@ public class serviceserver implements Callable<Void> {
     public sql_user _sql_user;
     public boolean isfinish=false;
     private int threadid;
-    public serviceserver(Socket connection, int _threadid) {
+    public ServiceServer(Socket connection, int _threadid) {
         this.connection = connection;
         threadid=_threadid;
     }
@@ -49,7 +48,7 @@ public class serviceserver implements Callable<Void> {
                 if(connection!=null)
                 connection.close();
                 isfinish=true;
-                servicecenter.getinstance().removeoffline_users(phone_number,this);
+                ServiceCenter.getinstance().removeoffline_users(phone_number,this);
             } catch (IOException e) {
                 e.printStackTrace();
             }

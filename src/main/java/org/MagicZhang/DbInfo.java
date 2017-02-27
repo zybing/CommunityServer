@@ -1,5 +1,5 @@
 package org.MagicZhang;
-public class dbinfo{
+public class DbInfo {
     public static final String driver="com.mysql.jdbc.Driver";
     public static final String url="jdbc:mysql://localhost:3306/community?useUnicode=tru" +
             "e&characterEncoding=UTF-8&useSSL=false";

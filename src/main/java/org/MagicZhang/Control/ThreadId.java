@@ -8,7 +8,7 @@ public class ThreadId {
     public ThreadId(int _initialid){
         this.initalid=_initialid;
     }
-    //if only callback in servicecenter it needn't synchronized
+    //if only callback in ServiceCenter it needn't synchronized
     public int getnextid(){
         return initalid++;
     }
