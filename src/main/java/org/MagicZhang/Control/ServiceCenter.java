@@ -73,7 +73,6 @@ public class ServiceCenter extends Thread{
     public void run(){
         ExecutorService pool = Executors.newFixedThreadPool(THREAD_NUM);
         try(ServerSocket server = new ServerSocket(PORT)) {
-            //_garbagefactory.start();
             while (true) {
                 try {
                     Socket connection = server.accept();
