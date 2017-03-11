@@ -17,6 +17,7 @@ public class Logic {
     //operator type
     public final static int login=1;
     public final static int heartbeat=2;
+    public final static int request=3;
     //user_type
     public final static int requester=1;
     public final static int volunteer=2;
@@ -65,5 +66,8 @@ public class Logic {
             System.out.println(new Date()+":location is null");
         }
         return result;
+    }
+    public static final String request(){
+        return null;
     }
 }

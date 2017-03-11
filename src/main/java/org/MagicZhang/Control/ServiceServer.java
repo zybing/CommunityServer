@@ -54,6 +54,11 @@ public class ServiceServer {
             String location=infos[1];
             return Logic.hearbeat(location,_sql_user);
         }
+        else if(info1==Logic.request){
+            String _phonenumber=infos[1];
+            String _location=infos[2];
+            String _requestinfo=infos[3];
+        }
         return null;
     }
     public void finish(){
