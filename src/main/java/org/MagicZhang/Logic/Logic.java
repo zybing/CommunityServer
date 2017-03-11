@@ -23,58 +23,47 @@ public class Logic {
     public final static int req_vol=3;
     public final static int unregister=4;
     public static SimpleDateFormat sdf= new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");;
-    public static final void login(String phone_number,BufferedWriter out,
+    public static final String login(String phone_number,
                                    user _user,ServiceServer thread){
+        String result=null;
         if(phone_number!=null){
             if(_user==null){
-                try {
-                    out.write(Logic.login+" "+unregister+" "+0+" "
-                        +0+"\r\n");//unregister
-                    out.flush();
-                    Sql_user.insert_user(new user(phone_number,(byte)4,
+                result=Logic.login+" "+unregister+" "+0+" "
+                        +0+"\r\n";//unregister
+                Sql_user.insert_user(new user(phone_number,(byte)4,
                         "0000-00-00 00:00:01","0,0"
                     ,0,0,(byte)0));
-                    System.out.println(new Date()+":add unregisster user "+phone_number);
+                System.out.println(new Date()+":add unregisster user "+phone_number);
                     thread.finish();
-                } catch (IOException e) {
-                    System.out.println(new Date()+":out exception");
-                }
             }
             else{
-                try {
-                    out.write(Logic.login+" "+_user.user_type()+" "+_user.help_number()+" "
-                        +_user.request_number()+"\r\n");
-                    out.flush();
-                    if(_user.user_type()!=4){
-                        ServiceCenter myself= ServiceCenter.getinstance();
-                        myself.addonline_users(phone_number,thread);
-                    }
-                    else{
-                        thread.finish();
-                    }
-                } catch (IOException e) {
-                    System.out.println(new Date()+":out exception");
+                result=Logic.login+" "+_user.user_type()+" "+_user.help_number()+" "
+                        +_user.request_number()+"\r\n";
+                if(_user.user_type()!=4){
+                    ServiceCenter myself= ServiceCenter.getinstance();
+                    myself.addonline_users(phone_number,thread);
+                }
+                else{
+                    thread.finish();
                 }
             }
         }
         else{
             System.out.println(new Date()+":phone_number is null");
         }
+        return result;
     }
-    public static final void hearbeat(String location, Sql_user _sql_user, BufferedWriter out){
+    public static final String hearbeat(String location, Sql_user _sql_user){
+        String result=null;
         if(location!=null){
             if(_sql_user._user!=null){
-                try {
-                    out.write("2 "+"yes\r\n");
-                    out.flush();
-                    _sql_user.update_location(sdf.format(new Date()),location);
-                } catch (IOException e) {
-                    System.out.println(new Date()+":out exception");
-                }
+                result="2 "+"yes\r\n";
+                _sql_user.update_location(sdf.format(new Date()),location);
             }
         }
         else{
             System.out.println(new Date()+":location is null");
         }
+        return result;
     }
 }

@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.*;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -19,8 +18,12 @@ public class ServiceCenter extends Thread{
             HashMap<String,ServiceServer>();
     private ThreadId _threadid;
     private static ServiceCenter myself;
-    public ServiceCenter(){
-        _threadid=new ThreadId(10000);
+    public ExecutorService read_pool;
+    public ExecutorService writer_pool;
+    private ServiceCenter(){
+        _threadid=new ThreadId(ServerInfo.THREADINITID);
+        read_pool = Executors.newFixedThreadPool(THREAD_NUM);
+        writer_pool = Executors.newFixedThreadPool(THREAD_NUM);
     }
     public static ServiceCenter getinstance(){
         if(myself==null){
@@ -36,15 +39,16 @@ public class ServiceCenter extends Thread{
         if(tmp!=null){
             if(!tmp.isfinish)
             {
-                System.out.println(new Date()+":try finish "+tmp);
+                System.out.println(new Date()+":try finish "+phone_number+" "+tmp);
                 tmp.finish();
             }
             else{
-                System.out.println(new Date()+":"+tmp+"has been finished");
+                System.out.println(new Date()+":"+phone_number+" "+
+                        tmp+"has been finished");
             }
         }
         else{
-            System.out.println(new Date()+":this phoner_number user is first been added");
+            System.out.println(new Date()+phone_number+":this phoner_number user is first been added");
         }
     }
     public synchronized void removeoffline_users(String phone_number,ServiceServer old_thread){
@@ -60,7 +64,7 @@ public class ServiceCenter extends Thread{
                 System.out.println(new Date()+":online num:"+online_users.size());
             }
             else{
-                System.out.println(new Date()+":user "+phone_number+" "+old_thread+"has been removed");
+                System.out.println(new Date()+":user "+phone_number+" "+old_thread+" has been removed");
                 System.out.println(new Date()+":online num:"+online_users.size());
             }
         }
@@ -71,14 +75,12 @@ public class ServiceCenter extends Thread{
     }
 
     public void run(){
-        ExecutorService pool = Executors.newFixedThreadPool(THREAD_NUM);
         try(ServerSocket server = new ServerSocket(PORT)) {
             while (true) {
                 try {
                     Socket connection = server.accept();
                     connection.setSoTimeout(ServerInfo.OUTTIME);
-                    Callable<Void> task = new ServiceServer(connection,_threadid.getnextid());
-                    pool.submit(task);
+                    ServiceServer task = new ServiceServer(connection,_threadid.getnextid());
                 } catch (IOException ex) {
                     ex.printStackTrace();
                 }
@@ -87,5 +89,4 @@ public class ServiceCenter extends Thread{
             System.err.println(new Date()+":Couldn't start login server");
         }
     }
-
 }
