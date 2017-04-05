@@ -4,10 +4,15 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
+import org.MagicZhang.Filter;
 import org.MagicZhang.Log;
+import org.MagicZhang.Logic.Logic;
+import org.MagicZhang.Modle.task;
 import org.MagicZhang.ServerInfo;
 /**
  * Created by sonof on 2017/2/21.
@@ -15,8 +20,8 @@ import org.MagicZhang.ServerInfo;
 public class ServiceCenter extends Thread{
     public int PORT = ServerInfo.PORT;
     public int THREAD_NUM = ServerInfo.THREAD_NUM;
-    public HashMap<String,ServiceServer> online_users=new
-            HashMap<String,ServiceServer>();
+    public ConcurrentHashMap<String,ServiceServer> online_users=new
+            ConcurrentHashMap<String,ServiceServer>();
     private ThreadId _threadid;
     private static ServiceCenter myself;
     public ExecutorService read_pool;
@@ -32,10 +37,10 @@ public class ServiceCenter extends Thread{
         }
         return myself;
     }
-    public synchronized void addonline_users(String phone_number,ServiceServer st){
+    public void addonline_users(String phone_number,ServiceServer st){
         ServiceServer tmp=online_users.put(phone_number,st);
         Log.log("add users "+phone_number+" "+st);
-        Log.log("online num:"+online_users.size());
+        Log.log("login num:"+online_users.size());
         st._sql_user.update_isonline((byte)1);
         if(tmp!=null){
             if(!tmp.isfinish)
@@ -53,7 +58,7 @@ public class ServiceCenter extends Thread{
                     "is first been added "+phone_number);
         }
     }
-    public synchronized void removeoffline_users(String phone_number,ServiceServer old_thread){
+    public void removeoffline_users(String phone_number,ServiceServer old_thread){
         ServiceServer st=online_users.get(phone_number);
         if(st!=null){
             if(old_thread==st)
@@ -63,19 +68,42 @@ public class ServiceCenter extends Thread{
                     st.finish();
                 online_users.remove(phone_number);
                 Log.log("remove users "+phone_number+" "+st);
-                Log.log("online num:"+online_users.size());
+                Log.log("login num:"+online_users.size());
             }
             else{
                 Log.log("user "+phone_number+" "+old_thread+" has been removed");
-                Log.log("online num:"+online_users.size());
+                Log.log("login num:"+online_users.size());
             }
         }
         else{
             Log.log("no user is been removed");
-            Log.log("online num:"+online_users.size());
+            Log.log("login num:"+online_users.size());
         }
     }
-
+    public boolean sendnotification(byte[] result,String location,task _task){
+        boolean send=false;
+        String[] locations=location.split(",");
+        Iterator<Map.Entry<String,ServiceServer>> iter=online_users.entrySet().iterator();
+        while(iter.hasNext()){
+            Map.Entry<String,ServiceServer> entry= iter.next();
+            String location2=entry.getValue()._sql_user._user.last_updatelocation();
+            String[] location2s=location2.split(",");
+            ServiceServer tmp=entry.getValue();
+            if(tmp._sql_user._user.user_type()== Logic.volunteer){
+                if(Filter.cal_distance(Double.parseDouble(locations[1]),Double.parseDouble(locations[0])
+                        ,Double.parseDouble(location2s[1]),Double.parseDouble(location2s[0]))
+                        <Filter.distance){
+                    try {
+                        tmp.addmessage(result);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    send=true;
+                }
+            }
+        }
+        return send;
+    }
     public void run(){
         try(ServerSocket server = new ServerSocket(PORT)) {
             while (true) {

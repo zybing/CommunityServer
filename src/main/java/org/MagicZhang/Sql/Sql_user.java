@@ -21,10 +21,13 @@ public class Sql_user {
             String sql = "select * from users where phone_number='"+phone_number+"'";
             rs=st.executeQuery(sql);
             while (rs.next()){
-                _user=new user(rs.getString(1),rs.getByte(2)
-                        ,rs.getString(3),rs.getString(4)
-                        ,rs.getInt(5),rs.getInt(6)
-                        ,rs.getByte(7));
+                _user=new user(rs.getString(1),rs.getString(2),
+                        rs.getByte(3)
+                        ,rs.getString(4),rs.getString(5)
+                        ,rs.getInt(6),rs.getInt(7)
+                        ,rs.getByte(8),rs.getByte(9)
+                ,rs.getByte(10),rs.getString(11),
+                        rs.getInt(12));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -97,7 +100,7 @@ public class Sql_user {
             conn=jdbcUtils.getConnection();
             st=conn.createStatement();
             int tmp_helpnumber=_user.help_number()+offset;
-            String sql="update users set helpnumber="+tmp_helpnumber
+            String sql="update users set help_number="+tmp_helpnumber
                     +" where phone_number='"+phone_number+"'";
             int num=st.executeUpdate(sql);
             if(num>0){
@@ -120,12 +123,34 @@ public class Sql_user {
             conn=jdbcUtils.getConnection();
             st=conn.createStatement();
             int tmp_requestnumber=_user.request_number()+offset;
-            String sql="update users set requestnumber="+tmp_requestnumber
-                    +"where phone_number='"+phone_number+"'";
+            String sql="update users set request_number="+tmp_requestnumber
+                    +" where phone_number='"+phone_number+"'";
             int num=st.executeUpdate(sql);
             if(num>0){
                 issuccess=true;
                 _user.update_requestnumber(offset);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }finally{
+            jdbcUtils.release(conn, st, rs);
+        }
+        return issuccess;
+    }
+    public synchronized boolean update_requeststatus(byte status){
+        Connection conn=null;
+        Statement st=null;
+        ResultSet rs=null;
+        boolean issuccess=false;
+        try {
+            conn=jdbcUtils.getConnection();
+            st=conn.createStatement();
+            String sql="update users set status_requester="+status
+                    +" where phone_number='"+phone_number+"'";
+            int num=st.executeUpdate(sql);
+            if(num>0){
+                issuccess=true;
+                _user.status_requester_$eq(status);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -158,6 +183,51 @@ public class Sql_user {
         }
         return issuccess;
     }
+    public synchronized boolean update_onlinetime(int onlinetime){
+        Connection conn=null;
+        Statement st=null;
+        ResultSet rs=null;
+        boolean issuccess=false;
+        try {
+            conn=jdbcUtils.getConnection();
+            st=conn.createStatement();
+            int value=_user.online_time()+onlinetime;
+            String sql="update users set online_time="+value
+                    +" where phone_number='"+phone_number+"'";
+            int num=st.executeUpdate(sql);
+            if(num>0){
+                issuccess=true;
+                _user.online_time_$eq(value);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }finally{
+            jdbcUtils.release(conn, st, rs);
+        }
+        return issuccess;
+    }
+    public synchronized boolean update_taskid(String taskid){
+        Connection conn=null;
+        Statement st=null;
+        ResultSet rs=null;
+        boolean issuccess=false;
+        try {
+            conn=jdbcUtils.getConnection();
+            st=conn.createStatement();
+            String sql="update users set current_taskid="+taskid
+                    +" where phone_number='"+phone_number+"'";
+            int num=st.executeUpdate(sql);
+            if(num>0){
+                issuccess=true;
+                _user.current_taskid_$eq(taskid);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }finally{
+            jdbcUtils.release(conn, st, rs);
+        }
+        return issuccess;
+    }
     public static boolean delete_byphonenumber(String phone_number){
         Connection conn=null;
         Statement st=null;
@@ -171,6 +241,28 @@ public class Sql_user {
             int num=st.executeUpdate(sql);
             if(num>0){
                 issuccess=true;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }finally{
+            jdbcUtils.release(conn, st, rs);
+        }
+        return issuccess;
+    }
+    public synchronized boolean update_helperstatus(byte status){
+        Connection conn=null;
+        Statement st=null;
+        ResultSet rs=null;
+        boolean issuccess=false;
+        try {
+            conn=jdbcUtils.getConnection();
+            st=conn.createStatement();
+            String sql="update users set status_helper="+status
+                    +" where phone_number='"+phone_number+"'";
+            int num=st.executeUpdate(sql);
+            if(num>0){
+                issuccess=true;
+                _user.status_helper_$eq(status);
             }
         } catch (SQLException e) {
             e.printStackTrace();

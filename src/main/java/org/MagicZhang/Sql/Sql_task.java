@@ -8,6 +8,48 @@ import java.sql.*;
  * Created by sonof on 2017/2/21.
  */
 public class Sql_task {
+    public task _task;
+    private static final int publishtime_interval=5000;
+    private static final int publishnum_threshold=2;
+    private long publishtime;
+    private int publishdetectnum;
+    private long ordertime;
+    private static final int ordertime_threshold=30000;
+    public Sql_task(String task_id){
+        _task=query_bytaskid(task_id);
+        publishtime=System.currentTimeMillis()-publishtime_interval;
+        publishdetectnum=0;
+        if(_task!=null){
+            ordertime=_task.ordertime();
+        }
+    }
+    //2代表超时，1代表继续判断，publishtime来源于类的初始化
+    public byte publishtimeout(long time){
+        if(publishdetectnum>publishnum_threshold)
+            return (byte)2;
+        if((time-publishtime)>publishtime_interval){
+            if(++publishdetectnum>publishnum_threshold)
+                return (byte)2;
+            else
+            {
+                publishtime=time;
+                return (byte)1;
+            }
+        }
+        return (byte)0;
+    }
+    public void setOrdertime(long time){
+        ordertime=time;
+        update_ordertime(time);
+    }
+    public boolean order_timeout(long time){
+        if(time-ordertime>ordertime_threshold){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
     public static task query_bytaskid(String task_id){
         Connection conn=null;
         Statement st = null;
@@ -22,7 +64,8 @@ public class Sql_task {
                 _task=new task(rs.getString(1),rs.getString(2)
                         ,rs.getString(3),rs.getString(4)
                         ,rs.getString(5),rs.getString(6)
-                        ,rs.getString(7),rs.getString(8));
+                        ,rs.getString(7),rs.getString(8)
+                        ,rs.getByte(9),rs.getLong(10));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -41,7 +84,8 @@ public class Sql_task {
             conn = jdbcUtils.getConnection();
             String sql = "insert into tasks(task_id," +
                     "request_phone_number,request_time,request_location,request_info" +
-                    ",volunteer_phone_number,ack_time,ack_location)values(?,?,?,?,?,?,?,?)";
+                    ",volunteer_phone_number,ack_time,ack_location,status)" +
+                    "values(?,?,?,?,?,?,?,?,?)";
             st = conn.prepareStatement(sql);
             st.setString(1, _task.task_id());
             st.setString(2, _task.request_phone_number());
@@ -51,6 +95,7 @@ public class Sql_task {
             st.setString(6, _task.volunteer_phone_number());
             st.setString(7, _task.ack_time());
             st.setString(8, _task.ack_location());
+            st.setByte(9, _task.status());
             st.executeUpdate();
             issuccess=true;
         }
@@ -62,8 +107,10 @@ public class Sql_task {
         }
         return issuccess;
     }
-    public static boolean update_ack(String task_id,String volunteer_phone_number,
+    public synchronized boolean update_ack(String volunteer_phone_number,
                                            String acktime,String acklocation){
+        if(_task==null)
+            return false;
         Connection conn=null;
         Statement st=null;
         ResultSet rs=null;
@@ -73,10 +120,13 @@ public class Sql_task {
             st=conn.createStatement();
             String sql="update tasks set volunteer_phone_number='"+volunteer_phone_number
                     +"',acktime='"+acktime+"',acklocation='"+acklocation+
-                    "' where task_id='"+task_id+"'";
+                    "' where task_id='"+_task.task_id()+"'";
             int num=st.executeUpdate(sql);
             if(num>0){
                 issuccess=true;
+                _task.volunteer_phone_number_$eq(volunteer_phone_number);
+                _task.ack_time_$eq(acktime);
+                _task.ack_location_$eq(acklocation);
             }
         } catch (SQLException e) {
 
@@ -99,6 +149,126 @@ public class Sql_task {
             int num=st.executeUpdate(sql);
             if(num>0){
                 issuccess=true;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }finally{
+            jdbcUtils.release(conn, st, rs);
+        }
+        return issuccess;
+    }
+    public synchronized boolean update_status(byte status){
+        if(_task==null)
+            return false;
+        Connection conn=null;
+        Statement st=null;
+        ResultSet rs=null;
+        boolean issuccess=false;
+        try {
+            conn=jdbcUtils.getConnection();
+            st=conn.createStatement();
+            String sql="update tasks set status='"+status+
+                    "' where task_id='"+_task.task_id()+"'";
+            int num=st.executeUpdate(sql);
+            if(num>0){
+                issuccess=true;
+                _task.status_$eq(status);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }finally{
+            jdbcUtils.release(conn, st, rs);
+        }
+        return issuccess;
+    }
+    public synchronized boolean update_ordertime(Long ordertime){
+        if(_task==null)
+            return false;
+        Connection conn=null;
+        Statement st=null;
+        ResultSet rs=null;
+        boolean issuccess=false;
+        try {
+            conn=jdbcUtils.getConnection();
+            st=conn.createStatement();
+            String sql="update tasks set ordertime='"+ordertime+
+                    "' where task_id='"+_task.task_id()+"'";
+            int num=st.executeUpdate(sql);
+            if(num>0){
+                issuccess=true;
+                _task.ordertime_$eq(ordertime);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }finally{
+            jdbcUtils.release(conn, st, rs);
+        }
+        return issuccess;
+    }
+    public synchronized boolean update_volunteerphonenumber(String volunteerphonenumber){
+        if(_task==null)
+            return false;
+        Connection conn=null;
+        Statement st=null;
+        ResultSet rs=null;
+        boolean issuccess=false;
+        try {
+            conn=jdbcUtils.getConnection();
+            st=conn.createStatement();
+            String sql="update tasks set volunteer_phone_number='"+volunteerphonenumber+
+                    "' where task_id='"+_task.task_id()+"'";
+            int num=st.executeUpdate(sql);
+            if(num>0){
+                issuccess=true;
+                _task.volunteer_phone_number_$eq(volunteerphonenumber);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }finally{
+            jdbcUtils.release(conn, st, rs);
+        }
+        return issuccess;
+    }
+    public synchronized boolean update_acktime(String acktime){
+        if(_task==null)
+            return false;
+        Connection conn=null;
+        Statement st=null;
+        ResultSet rs=null;
+        boolean issuccess=false;
+        try {
+            conn=jdbcUtils.getConnection();
+            st=conn.createStatement();
+            String sql="update tasks set ack_time='"+acktime+
+                    "' where task_id='"+_task.task_id()+"'";
+            int num=st.executeUpdate(sql);
+            if(num>0){
+                issuccess=true;
+                _task.ack_time_$eq(acktime);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }finally{
+            jdbcUtils.release(conn, st, rs);
+        }
+        return issuccess;
+    }
+    public synchronized boolean update_acklocation(String acklocation){
+        if(_task==null)
+            return false;
+        Connection conn=null;
+        Statement st=null;
+        ResultSet rs=null;
+        boolean issuccess=false;
+        try {
+            conn=jdbcUtils.getConnection();
+            st=conn.createStatement();
+            String sql="update tasks set ack_location='"+acklocation+
+                    "' where task_id='"+_task.task_id()+"'";
+            int num=st.executeUpdate(sql);
+            if(num>0){
+                issuccess=true;
+                _task.ack_location_$eq(acklocation);
             }
         } catch (SQLException e) {
             e.printStackTrace();
