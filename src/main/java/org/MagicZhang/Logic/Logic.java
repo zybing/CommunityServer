@@ -4,9 +4,14 @@ import org.MagicZhang.Control.Util.Converter;
 import org.MagicZhang.Log;
 import org.MagicZhang.Modle.task;
 import org.MagicZhang.Modle.user;
+import org.MagicZhang.ServerInfo;
 import org.MagicZhang.Sql.Sql_task;
 import org.MagicZhang.Sql.Sql_user;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -24,10 +29,11 @@ public class Logic {
     public final static int order=5;
     public final static int notification=6;
     public final static int ack=7;
-    public final static int sys_finish1=8;
-    public final static int sys_finish2=9;
-    public final static int requester_finish=10;
-    public final static int helper_finish=11;
+    public final static int requestaudio=8;
+    public final static int sys_finish1=9;
+    public final static int sys_finish2=10;
+    public final static int requester_finish=11;
+    public final static int helper_finish=12;
     //user_type
     public final static int requester=1;
     public final static int volunteer=2;
@@ -36,6 +42,9 @@ public class Logic {
     //ack_status
     public final static byte ack_success=1;
     public final static byte ack_failed=0;
+    //file
+    public final static int upfile=0;
+    public final static int downloadfile=1;
     //
     public static SimpleDateFormat sdf= new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     //未注册的用户不给予回复，客户端连接成功后为4，否则为0
@@ -373,6 +382,7 @@ public class Logic {
             index+=task_infolen.length;
             System.arraycopy(task_info,0,result,index,
                         task_info.length);
+            index+=task_info.length;
             result[index]=_task.status();
             index+=1;
             System.arraycopy(task_ordertime,0,result,index,
@@ -381,13 +391,13 @@ public class Logic {
         return result;
     }
     public static final byte[] request(String location,
-                                       String taskinfo,ServiceServer thread){
+                                       String taskinfo,ServiceServer thread,String taskid,
+                                       String fileurl,long identity){
         byte[] result=null;
         if(thread._sql_user._user.user_type()==Logic.requester)
         {
             if(thread.currenttask==null||thread.currenttask._task==null||thread.currenttask.
                 _task.status()>=Status.requester_finish){
-                String taskid=thread.gentaskid();
                 String request_phone_number=thread._sql_user._user.phone_number();
                 String request_time=sdf.format(new Date());
                 String volunteer_phone_number="";
@@ -396,7 +406,7 @@ public class Logic {
                 byte status=0;
                 task _task=new task(taskid,request_phone_number,request_time
                 ,location,taskinfo,volunteer_phone_number,ack_time,ack_location
-                ,status,0L);
+                ,status,0L,fileurl);
                 Sql_task.insert_task(_task);
                 int num=4;
                 byte[] _type=Converter.getBytes(Logic.request);
@@ -408,6 +418,8 @@ public class Logic {
                 byte[] requesttimelen=Converter.getBytes(requesttime.length);
                 num+=requesttimelen.length;
                 num+=requesttime.length;
+                byte[] identityb=Converter.getBytes(identity);
+                num+=8;
                 result=new byte[num];
                 System.arraycopy(_type,0,result,0,4);
                 System.arraycopy(taskidlen,0,result,4,taskidlen.length);
@@ -417,6 +429,8 @@ public class Logic {
                 System.arraycopy(requesttimelen,0,result,index,requesttimelen.length);
                 index+=requesttimelen.length;
                 System.arraycopy(requesttime,0,result,index,requesttime.length);
+                index+=requesttime.length;
+                System.arraycopy(identityb,0,result,index,identityb.length);
                 thread.tasklock.lock();
                 try{
                     thread.currenttask=new Sql_task(taskid);
@@ -494,20 +508,31 @@ public class Logic {
         result=Converter.getBytes(Logic.sys_finish2);
         return result;
     }
+
     public static final byte[] requester_finish(ServiceServer requester){
-        requester._sql_user.update_taskid("0");
-        requester._sql_user.update_requeststatus(Status.request_ui);
-        requester.currenttask.update_status(Status.requester_finish);
         byte[] result=null;
+        requester.updatecurrenttaskinfo();
+        if(requester.currenttask._task.status()<Logic.sys_finish1){
+            requester._sql_user.update_taskid("0");
+            requester._sql_user.update_requeststatus(Status.request_ui);
+            requester.currenttask.update_status(Status.requester_finish);
+        }
         result=Converter.getBytes(Logic.requester_finish);
         return result;
     }
     public static final byte[] helper_finish(ServiceServer helper){
-        helper._sql_user.update_taskid("0");
-        helper._sql_user.update_helperstatus(Status.help_ui);
-        helper.currenttask.update_status(Status.helper_finish);
         byte[] result=null;
+        helper.updatecurrenttaskinfo();
+        if(helper.currenttask._task.status()<Logic.sys_finish1){
+            helper._sql_user.update_taskid("0");
+            helper._sql_user.update_helperstatus(Status.help_ui);
+            helper.currenttask.update_status(Status.helper_finish);
+        }
         result=Converter.getBytes(Logic.helper_finish);
         return result;
+    }
+    public static final byte[] requesteraudio(String taskid,ServiceServer helper){
+
+        return null;
     }
 }

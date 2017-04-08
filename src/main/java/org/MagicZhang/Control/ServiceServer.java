@@ -23,7 +23,7 @@ import java.util.concurrent.locks.ReentrantLock;
 public class ServiceServer {
     private String phone_number;
     private Socket connection;
-    public Sql_user _sql_user;
+    public Sql_user _sql_user;//user的内存映射是唯一的
     public Sql_task currenttask;
     public volatile Long logintime;
     public volatile boolean isfinish=false;
@@ -36,6 +36,7 @@ public class ServiceServer {
 //    public Lock userlock=new ReentrantLock();
     private ReadThread _readthread;
     private WriterThread _writerthread;
+    private TaskExecute taskExecute;
     public ArrayBlockingQueue<byte[]> messages;
     public ServiceServer(Socket connection, int _threadid) {
         this.connection = connection;
@@ -46,6 +47,8 @@ public class ServiceServer {
             ServiceCenter.getinstance().read_pool.submit(_readthread);
             _writerthread=new WriterThread();
             ServiceCenter.getinstance().writer_pool.submit(_writerthread);
+            taskExecute=new TaskExecute();
+            ServiceCenter.getinstance().tasks_pool.submit(taskExecute);
         } catch (IOException e) {
             Log.log("server:socketthread create failed "+" "+this);
         }
@@ -80,7 +83,14 @@ public class ServiceServer {
             String info=SocketReader.readString(in,tmp);
             tmp=SocketReader.readInt(in);
             String location=SocketReader.readString(in,tmp);
-            return Logic.request(location,info,this);
+            String taskid=this.gentaskid();
+            String fileurl="";
+            Long identity=0L;
+            if(info.equals("2")){
+                fileurl="";
+                identity=SocketReader.readLong(in);
+            }
+            return Logic.request(location,info,this,taskid,fileurl,identity);
         }
         else if(type==Logic.ack){//主动发的才需要进行身份识别，被动收的没办法
             int tmp=0;
@@ -112,6 +122,12 @@ public class ServiceServer {
         }
         else if(type==Logic.helper_finish){
             return Logic.helper_finish(this);
+        }
+        else if(type==Logic.requestaudio){
+            int tmp=0;
+            tmp=SocketReader.readInt(in);
+            String taskid=SocketReader.readString(in,tmp);
+
         }
         return null;
     }
@@ -199,15 +215,6 @@ public class ServiceServer {
                             out.write(value);
                             out.flush();
                         }
-                        if(_sql_user!=null&&_sql_user._user!=null)
-                        {
-                            if(_sql_user._user.user_type()==Logic.requester){
-                                requester_execute();
-                            }
-                            else if(_sql_user._user.user_type()==Logic.volunteer){
-
-                            }
-                        }
                         if(connection.isClosed())
                         {
                             Log.log("writer break");
@@ -231,33 +238,73 @@ public class ServiceServer {
             }
             return null;
         }
+    }
+    public class TaskExecute implements  Callable<Void>{
+        @Override
+        public Void call(){
+            try {
+                while(true){
+                    if(islogged){
+                        if(_sql_user!=null&&_sql_user._user!=null)
+                        {
+                            if(_sql_user._user.user_type()==Logic.requester){
+                                requester_execute();
+                            }
+                            else if(_sql_user._user.user_type()==Logic.volunteer){
+
+                            }
+                        }
+                    }
+                    if(connection.isClosed())
+                    {
+                        Log.log("taskexecute break");
+                        break;
+                    }
+                    Thread.sleep(ServerInfo.tasktime);
+                }
+            }
+            catch (Exception e){
+
+            }
+            finally {
+
+            }
+            return null;
+        }
         public void requester_execute(){
             if(currenttask!=null&&currenttask._task!=null){
                 if(currenttask._task.status()== Status.unpublish){
                     tasklock.lock();
                     try {
-                        byte rr = currenttask.publishtimeout(System.currentTimeMillis());
-                        if (rr == (byte) 1) {
-                            byte[] result = Logic.notification(currenttask._task);
-                            boolean tmp = ServiceCenter.getinstance().sendnotification(result,
-                                    currenttask._task.request_location(), currenttask._task);
-                            if (tmp) {
-                                currenttask.update_status(Status.publish);
-                                currenttask.setOrdertime(System.currentTimeMillis());
-                                byte[] data=Logic.order();
-                                addmessage(data);
-                                Log.log("task is published success"+phone_number
-                                +" "+this);
-                            } else {
-                                Log.log("no user is filtered");
-                            }
-                        } else if (rr == (byte) 2) {
-                            if (currenttask._task.status() == Status.unpublish)
-                            {
-                                currenttask.update_status(Status.system_finish1);
-                                _sql_user.update_taskid("0");
-                                Log.log("task is end because sys_finish1");
-                                addmessage(Logic.sys_finish1());
+                        if(currenttask._task.status()== Status.unpublish){
+                            byte rr = currenttask.publishtimeout(System.currentTimeMillis());
+                            if (rr == (byte) 1) {
+                                if(currenttask._task.request_info().equals("2")&&
+                                        currenttask._task.fileurl().length()==0){
+                                    Log.log("file haven't been upload");
+                                    return;
+                                }
+                                byte[] result = Logic.notification(currenttask._task);
+                                boolean tmp = ServiceCenter.getinstance().sendnotification(result,
+                                        currenttask._task.request_location(), currenttask._task);
+                                if (tmp) {
+                                    currenttask.update_status(Status.publish);
+                                    currenttask.setOrdertime(System.currentTimeMillis());
+                                    byte[] data=Logic.order();
+                                    addmessage(data);
+                                    Log.log("task is published success"+phone_number
+                                            +" "+this);
+                                } else {
+                                    Log.log("no user is filtered");
+                                }
+                            } else if (rr == (byte) 2) {
+                                if (currenttask._task.status() == Status.unpublish)
+                                {
+                                    currenttask.update_status(Status.system_finish1);
+                                    _sql_user.update_taskid("0");
+                                    Log.log("task is end because sys_finish1");
+                                    addmessage(Logic.sys_finish1());
+                                }
                             }
                         }
                     }
@@ -354,6 +401,18 @@ public class ServiceServer {
             }
         }else{
             return false;
+        }
+    }
+    public void updatecurrenttaskinfo(){
+        tasklock.lock();
+        try{
+            currenttask.update_task();
+        }
+        catch(Exception e){
+
+        }
+        finally {
+            tasklock.unlock();
         }
     }
 }

@@ -6,11 +6,11 @@ import java.sql.*;
 
 /**
  * Created by sonof on 2017/2/21.
- */
+ *  */
 public class Sql_task {
     public task _task;
     private static final int publishtime_interval=5000;
-    private static final int publishnum_threshold=2;
+    private static final int publishnum_threshold=4;
     private long publishtime;
     private int publishdetectnum;
     private long ordertime;
@@ -36,7 +36,7 @@ public class Sql_task {
                 return (byte)1;
             }
         }
-        return (byte)0;
+        return (byte)1;
     }
     public void setOrdertime(long time){
         ordertime=time;
@@ -65,7 +65,8 @@ public class Sql_task {
                         ,rs.getString(3),rs.getString(4)
                         ,rs.getString(5),rs.getString(6)
                         ,rs.getString(7),rs.getString(8)
-                        ,rs.getByte(9),rs.getLong(10));
+                        ,rs.getByte(9),rs.getLong(10),
+                        rs.getString(11));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -107,7 +108,7 @@ public class Sql_task {
         }
         return issuccess;
     }
-    public synchronized boolean update_ack(String volunteer_phone_number,
+    public boolean update_ack(String volunteer_phone_number,
                                            String acktime,String acklocation){
         if(_task==null)
             return false;
@@ -157,7 +158,7 @@ public class Sql_task {
         }
         return issuccess;
     }
-    public synchronized boolean update_status(byte status){
+    public boolean update_status(byte status){
         if(_task==null)
             return false;
         Connection conn=null;
@@ -181,7 +182,7 @@ public class Sql_task {
         }
         return issuccess;
     }
-    public synchronized boolean update_ordertime(Long ordertime){
+    public boolean update_ordertime(Long ordertime){
         if(_task==null)
             return false;
         Connection conn=null;
@@ -205,7 +206,7 @@ public class Sql_task {
         }
         return issuccess;
     }
-    public synchronized boolean update_volunteerphonenumber(String volunteerphonenumber){
+    public boolean update_volunteerphonenumber(String volunteerphonenumber){
         if(_task==null)
             return false;
         Connection conn=null;
@@ -229,7 +230,7 @@ public class Sql_task {
         }
         return issuccess;
     }
-    public synchronized boolean update_acktime(String acktime){
+    public boolean update_acktime(String acktime){
         if(_task==null)
             return false;
         Connection conn=null;
@@ -253,7 +254,7 @@ public class Sql_task {
         }
         return issuccess;
     }
-    public synchronized boolean update_acklocation(String acklocation){
+    public boolean update_acklocation(String acklocation){
         if(_task==null)
             return false;
         Connection conn=null;
@@ -269,6 +270,48 @@ public class Sql_task {
             if(num>0){
                 issuccess=true;
                 _task.ack_location_$eq(acklocation);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }finally{
+            jdbcUtils.release(conn, st, rs);
+        }
+        return issuccess;
+    }
+    //必要时必须主动更新信息，因为task可以同时被requester和helper同时拥有，或造成消息不
+    //对称，但是完全意义上，被其他线程更改task数据库内容，都要做出更新是不可能的。
+    //要在对信息真实性有要求的地方进行更新。
+    //ack之后的任务没有必要同步，信息已经全面，而结束不需要同步，所以只有音频文件的位置信息需要同步
+    //而且其实没有绝对必要
+    public boolean update_task(){
+        if(_task!=null)
+        {
+            _task=query_bytaskid(_task.task_id());
+            return true;
+        }
+        else{
+            _task=query_bytaskid(_task.task_id());
+            if(_task!=null)
+                return true;
+        }
+        return false;
+    }
+    public boolean update_fileurl(String fileurl){
+        if(_task==null)
+            return false;
+        Connection conn=null;
+        Statement st=null;
+        ResultSet rs=null;
+        boolean issuccess=false;
+        try {
+            conn=jdbcUtils.getConnection();
+            st=conn.createStatement();
+            String sql="update tasks set fileurl='"+fileurl+
+                    "' where task_id='"+_task.task_id()+"'";
+            int num=st.executeUpdate(sql);
+            if(num>0){
+                issuccess=true;
+                _task.ack_time_$eq(fileurl);
             }
         } catch (SQLException e) {
             e.printStackTrace();

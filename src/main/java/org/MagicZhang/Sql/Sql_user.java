@@ -66,7 +66,7 @@ public class Sql_user {
         }
         return issuccess;
     }
-    public synchronized boolean update_location(String last_updatetime
+    public  boolean update_location(String last_updatetime
     ,String last_updatelocation){
         Connection conn=null;
         Statement st=null;
@@ -91,7 +91,7 @@ public class Sql_user {
         }
         return issuccess;
     }
-    public synchronized boolean update_helpnumber(int offset){
+    public  boolean update_helpnumber(int offset){
         Connection conn=null;
         Statement st=null;
         ResultSet rs=null;
@@ -114,7 +114,7 @@ public class Sql_user {
         }
         return issuccess;
     }
-    public synchronized boolean update_requestnumber(int offset){
+    public  boolean update_requestnumber(int offset){
         Connection conn=null;
         Statement st=null;
         ResultSet rs=null;
@@ -137,7 +137,7 @@ public class Sql_user {
         }
         return issuccess;
     }
-    public synchronized boolean update_requeststatus(byte status){
+    public  boolean update_requeststatus(byte status){
         Connection conn=null;
         Statement st=null;
         ResultSet rs=null;
@@ -159,7 +159,7 @@ public class Sql_user {
         }
         return issuccess;
     }
-    public synchronized boolean update_isonline(Byte isonline){
+    public  boolean update_isonline(Byte isonline){
         if(isonline==_user.isonline())
             return true;
         Connection conn=null;
@@ -183,7 +183,7 @@ public class Sql_user {
         }
         return issuccess;
     }
-    public synchronized boolean update_onlinetime(int onlinetime){
+    public  boolean update_onlinetime(int onlinetime){
         Connection conn=null;
         Statement st=null;
         ResultSet rs=null;
@@ -206,7 +206,7 @@ public class Sql_user {
         }
         return issuccess;
     }
-    public synchronized boolean update_taskid(String taskid){
+    public  boolean update_taskid(String taskid){
         Connection conn=null;
         Statement st=null;
         ResultSet rs=null;
@@ -249,7 +249,7 @@ public class Sql_user {
         }
         return issuccess;
     }
-    public synchronized boolean update_helperstatus(byte status){
+    public  boolean update_helperstatus(byte status){
         Connection conn=null;
         Statement st=null;
         ResultSet rs=null;

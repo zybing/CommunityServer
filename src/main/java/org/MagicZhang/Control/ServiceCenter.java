@@ -1,5 +1,6 @@
 package org.MagicZhang.Control;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -26,10 +27,15 @@ public class ServiceCenter extends Thread{
     private static ServiceCenter myself;
     public ExecutorService read_pool;
     public ExecutorService writer_pool;
+    public ExecutorService tasks_pool;
     private ServiceCenter(){
-        _threadid=new ThreadId(ServerInfo.THREADINITID);
+        _threadid=new ThreadId(ServerInfo.THREADINITID,ServerInfo.THREADMAXID);
         read_pool = Executors.newFixedThreadPool(THREAD_NUM);
         writer_pool = Executors.newFixedThreadPool(THREAD_NUM);
+        tasks_pool = Executors.newFixedThreadPool(THREAD_NUM);
+        File _file=new File(ServerInfo.root);
+        if(!_file.exists())
+            _file.mkdir();
     }
     public static ServiceCenter getinstance(){
         if(myself==null){
