@@ -29,11 +29,10 @@ public class Logic {
     public final static int order=5;
     public final static int notification=6;
     public final static int ack=7;
-    public final static int requestaudio=8;
-    public final static int sys_finish1=9;
-    public final static int sys_finish2=10;
-    public final static int requester_finish=11;
-    public final static int helper_finish=12;
+    public final static int sys_finish1=8;
+    public final static int sys_finish2=9;
+    public final static int requester_finish=10;
+    public final static int helper_finish=11;
     //user_type
     public final static int requester=1;
     public final static int volunteer=2;
@@ -73,7 +72,7 @@ public class Logic {
         byte[] result=null;
         if(location!=null){
             if(_sql_user._user!=null){
-                result=Converter.getBytes(2);
+                result=Converter.getBytes(Logic.heartbeat);
                 _sql_user.update_location(sdf.format(new Date()),location);
             }
         }

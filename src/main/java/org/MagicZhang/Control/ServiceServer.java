@@ -123,12 +123,6 @@ public class ServiceServer {
         else if(type==Logic.helper_finish){
             return Logic.helper_finish(this);
         }
-        else if(type==Logic.requestaudio){
-            int tmp=0;
-            tmp=SocketReader.readInt(in);
-            String taskid=SocketReader.readString(in,tmp);
-
-        }
         return null;
     }
     public void finish(){

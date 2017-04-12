@@ -9,12 +9,12 @@ import java.sql.*;
  *  */
 public class Sql_task {
     public task _task;
-    private static final int publishtime_interval=5000;
-    private static final int publishnum_threshold=4;
+    private static final int publishtime_interval=1000;
+    private static final int publishnum_threshold=30;
     private long publishtime;
     private int publishdetectnum;
     private long ordertime;
-    private static final int ordertime_threshold=30000;
+    private static final int ordertime_threshold=90000;
     public Sql_task(String task_id){
         _task=query_bytaskid(task_id);
         publishtime=System.currentTimeMillis()-publishtime_interval;
@@ -36,7 +36,7 @@ public class Sql_task {
                 return (byte)1;
             }
         }
-        return (byte)1;
+        return (byte)0;
     }
     public void setOrdertime(long time){
         ordertime=time;
