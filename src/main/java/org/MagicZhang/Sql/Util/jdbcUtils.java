@@ -3,7 +3,7 @@ package org.MagicZhang.Sql.Util;
 import java.sql.*;
 
 import org.MagicZhang.DbInfo;
-
+//JdbcUtils进行数据库的连接和释放
 public class jdbcUtils {
     private static String driver=null;
     private static String url=null;

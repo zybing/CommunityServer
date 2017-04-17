@@ -33,16 +33,15 @@ public class ServiceCenter extends Thread{
         read_pool = Executors.newFixedThreadPool(THREAD_NUM);
         writer_pool = Executors.newFixedThreadPool(THREAD_NUM);
         tasks_pool = Executors.newFixedThreadPool(THREAD_NUM);
-        File _file=new File(ServerInfo.root);
-        if(!_file.exists())
-            _file.mkdir();
     }
+    //单例设计模式
     public static ServiceCenter getinstance(){
         if(myself==null){
             myself=new ServiceCenter();
         }
         return myself;
     }
+    //添加在线用户
     public void addonline_users(String phone_number,ServiceServer st){
         ServiceServer tmp=online_users.put(phone_number,st);
         Log.log("add users "+phone_number+" "+st);
@@ -64,6 +63,7 @@ public class ServiceCenter extends Thread{
                     "is first been added "+phone_number);
         }
     }
+    //移除在线用户
     public void removeoffline_users(String phone_number,ServiceServer old_thread){
         ServiceServer st=online_users.get(phone_number);
         if(st!=null){
@@ -86,6 +86,7 @@ public class ServiceCenter extends Thread{
             Log.log("login num:"+online_users.size());
         }
     }
+    //下发通知的函数
     public boolean sendnotification(byte[] result,String location,task _task){
         boolean send=false;
         String[] locations=location.split(",");

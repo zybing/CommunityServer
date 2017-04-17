@@ -2,7 +2,12 @@ package org.MagicZhang.Sql;
 import org.MagicZhang.Modle.user;
 import org.MagicZhang.Sql.Util.jdbcUtils;
 import java.sql.*;
-
+/**
+ * Created by sonof on 2017/2/21.
+ * 用于将数据库的user表数据保存到该类中，同时提供内存中备份
+ * 对于user中的更新操作，会同时修改数据库并对成员变量_user进行修改
+ * 这样进行查询操作时不需要重新读取数据库（因为user只有一个修改点）
+ *  */
 public class Sql_user {
     private String phone_number;
     public user _user;// as a buffer,but no effect for concurrence

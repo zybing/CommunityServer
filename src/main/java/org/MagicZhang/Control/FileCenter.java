@@ -3,6 +3,7 @@ package org.MagicZhang.Control;
 import org.MagicZhang.Log;
 import org.MagicZhang.ServerInfo;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -16,6 +17,9 @@ public class FileCenter extends Thread{
     private ExecutorService file_pool;
     public FileCenter(){
         file_pool= Executors.newCachedThreadPool();
+        File _file=new File(ServerInfo.root);
+        if(!_file.exists())
+            _file.mkdir();
     }
     public void run(){
         try(ServerSocket server = new ServerSocket(ServerInfo.FILEPORT)) {
@@ -29,7 +33,7 @@ public class FileCenter extends Thread{
                 }
             }
         } catch (IOException ex) {
-            Log.log("Couldn't start login server");
+            Log.log("Couldn't start File server");
         }
     }
 }

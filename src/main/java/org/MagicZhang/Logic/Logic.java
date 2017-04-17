@@ -38,10 +38,10 @@ public class Logic {
     public final static int volunteer=2;
     public final static int req_vol=3;
     public final static int unregister=4;
-    //ack_status
+    //确认抢单的类型
     public final static byte ack_success=1;
     public final static byte ack_failed=0;
-    //file
+    //文件协议类型
     public final static int upfile=0;
     public final static int downloadfile=1;
     //

@@ -4,6 +4,7 @@ import java.util.Date;
 
 /**
  * Created by sonof on 2017/3/13.
+ * 日志输出
  */
 public class Log {
     public static final boolean OUTPUT=true;

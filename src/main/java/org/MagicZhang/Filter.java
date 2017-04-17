@@ -2,9 +2,11 @@ package org.MagicZhang;
 
 /**
  * Created by sonof on 2017/3/27.
+ * 设置志愿者的筛选半径，以及包括计算给定两点的距离
  */
 public class Filter {
     public static final double distance=2000;
+    //计算两点经纬度
     public static double cal_distance(double lon1,double lat1,
                                       double lon2,double lat2){
         double a, b, R;

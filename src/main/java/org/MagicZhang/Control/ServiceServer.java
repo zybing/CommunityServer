@@ -24,20 +24,21 @@ public class ServiceServer {
     private String phone_number;
     private Socket connection;
     public Sql_user _sql_user;//user的内存映射是唯一的
-    public Sql_task currenttask;
+    public Sql_task currenttask;//task的内存映射，但是不唯一
     public volatile Long logintime;
-    public volatile boolean isfinish=false;
-    private volatile boolean readfinish=false;
-    private volatile boolean writefinish=false;
-    private volatile boolean islogged=false;
+    public volatile boolean isfinish=false;//读写线程是否都结束，即socket是否结束
+    private volatile boolean readfinish=false;//读线程是否结束
+    private volatile boolean writefinish=false;//写线程是否结束
+    private volatile boolean islogged=false;//客户端是否已经登陆
     private int threadid;
-    public Lock tasklock =new ReentrantLock();
-    public static Lock acktasklock=new ReentrantLock();
-//    public Lock userlock=new ReentrantLock();
+    public Lock tasklock =new ReentrantLock();//task处理的锁
+    public static Lock acktasklock=new ReentrantLock();//也是处理task的锁，仅用于志愿者接单，但是
+    //求助者不在线的情况，如果在线，则使用上面的锁
+
     private ReadThread _readthread;
     private WriterThread _writerthread;
     private TaskExecute taskExecute;
-    public ArrayBlockingQueue<byte[]> messages;
+    public ArrayBlockingQueue<byte[]> messages;//消息队列来自于读和任务处理线程，用于写线程下发
     public ServiceServer(Socket connection, int _threadid) {
         this.connection = connection;
         threadid=_threadid;
@@ -53,8 +54,8 @@ public class ServiceServer {
             Log.log("server:socketthread create failed "+" "+this);
         }
     }
-
-    public byte[] execute_cs(int type,DataInputStream in) throws IOException {
+    //处理来自于readthread的请求信息
+    public byte[] execute_command(int type, DataInputStream in) throws IOException {
         if(type== Logic.login){
             int tmp=SocketReader.readInt(in);
             String phone_number=SocketReader.readString(in,tmp);
@@ -125,6 +126,7 @@ public class ServiceServer {
         }
         return null;
     }
+    //关闭socket链接
     public void finish(){
         try {
             if(readfinish&&writefinish)
@@ -141,6 +143,7 @@ public class ServiceServer {
             e.printStackTrace();
         }
     }
+    //更新用户在线的时间
     public void updateonlinetime(){
         if(_sql_user._user.isonline()==1){
             int onlinetime= (int) (System.currentTimeMillis()/
@@ -149,6 +152,7 @@ public class ServiceServer {
             logintime=System.currentTimeMillis()/60000;
         }
     }
+    //登录成功后进行部分变量初始化
     public void login(){
         isfinish=false;
         islogged=true;
@@ -164,7 +168,7 @@ public class ServiceServer {
             try {
                 while(true){
                     int type= SocketReader.readInt(in);
-                    byte[] result=execute_cs(type,in);
+                    byte[] result= execute_command(type,in);
                     if(result!=null)
                     {
                         try {
@@ -331,6 +335,7 @@ public class ServiceServer {
             }
         }
     }
+    //添加消息到队列
     public void addmessage(byte[] data) throws InterruptedException {
         if(messages.offer(data,ServerInfo.THRESHOLD, TimeUnit.MILLISECONDS)){
             Log.log("msg has been add "+phone_number+" "+this);
@@ -339,9 +344,11 @@ public class ServiceServer {
             ServiceServer.this.finish();
         }
     }
+    //对每一个请求生物生成taskid
     public String gentaskid(){
         return ""+System.currentTimeMillis()+threadid;
     }
+    //求助者在线的时候进行任务确认
     public synchronized boolean acktask(ServiceServer helper,String taskid,
                                         String location){
         if(currenttask!=null&&currenttask._task!=null&&
@@ -365,6 +372,7 @@ public class ServiceServer {
         }
         return false;
     }
+    //求助者不在线时进行任务确认
     public static boolean acktask(String taskid,ServiceServer helper,String location){
         Sql_task _task=new Sql_task(taskid);
         if(_task._task!=null){
@@ -397,6 +405,7 @@ public class ServiceServer {
             return false;
         }
     }
+    //由于task的引用不唯一，在必要时，进行task的信息更新
     public void updatecurrenttaskinfo(){
         tasklock.lock();
         try{
