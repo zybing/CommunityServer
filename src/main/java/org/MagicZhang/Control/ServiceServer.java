@@ -179,7 +179,7 @@ public class ServiceServer {
                                 e.printStackTrace();
                         }
                     }
-                    Thread.yield();
+                    Thread.sleep(ServerInfo.readtime);
                 }
             } catch (IOException e) {
                 Log.log("server:socketreadthread finished "
@@ -213,13 +213,13 @@ public class ServiceServer {
                             out.write(value);
                             out.flush();
                         }
-                        if(connection.isClosed())
-                        {
-                            Log.log("writer break");
-                            break;
-                        }
                     }
-                    Thread.yield();
+                    if(connection.isClosed())
+                    {
+                        Log.log("writer break");
+                        break;
+                    }
+                    Thread.sleep(ServerInfo.writetime);
                 }
             } catch (IOException e) {
                 Log.log("server:socketwriterthread finished "

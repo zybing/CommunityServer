@@ -18,4 +18,6 @@ public class ServerInfo {
 
     public static char separator='/';//文件系统分隔符，不同系统不同
     public static int tasktime=500;//处理任务的线程的每次处理的间隔时间，毫秒
+    public static int readtime=500;//读的线程的每次处理的间隔时间，毫秒
+    public static int writetime=500;//写的线程的每次处理的间隔时间，毫秒
 }
