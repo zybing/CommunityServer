@@ -63,8 +63,12 @@ public class ServiceServer {
                 _sql_user= new Sql_user(phone_number);
             if(this.phone_number==null)
                 this.phone_number=phone_number;
-            if(currenttask==null)
-                currenttask=new Sql_task(_sql_user._user.current_taskid());
+            if(currenttask==null){
+                if(_sql_user._user!=null)
+                    currenttask=new Sql_task(_sql_user._user.current_taskid());
+                else
+                    currenttask=new Sql_task("0");
+            }
             return Logic.login(phone_number,_sql_user._user,currenttask._task,
                     this);
         }
@@ -186,6 +190,7 @@ public class ServiceServer {
                         + phone_number+" "+ServiceServer.this);
             }
             catch(Exception e){
+                e.printStackTrace();
             }
             finally {
                 readfinish=true;
