@@ -44,6 +44,10 @@ public class Logic {
     //文件协议类型
     public final static int upfile=0;
     public final static int downloadfile=1;
+
+    //登陆是否成功
+    public final static int loginsuccess=0;
+    public final static int loginfailed=1;
     //
     public static SimpleDateFormat sdf= new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     //未注册的用户不给予回复，客户端连接成功后为4，否则为0
@@ -89,9 +93,9 @@ public class Logic {
             byte[] _type=Converter.getBytes(type);
             byte[] help_number=Converter.getBytes(_user.help_number());
             byte[] request_number=Converter.getBytes(_user.request_number());
-            byte[] usernamelen=Converter.getBytes(_user.user_name().length());
-            num+=usernamelen.length;
             byte[] username=Converter.getBytes(_user.user_name());
+            byte[] usernamelen=Converter.getBytes(username.length);
+            num+=usernamelen.length;
             num+=username.length;
             byte[] online_time=Converter.getBytes(_user.online_time());
             num+=online_time.length;

@@ -351,7 +351,7 @@ public class ServiceServer {
     }
     //对每一个请求生物生成taskid
     public String gentaskid(){
-        return ""+System.currentTimeMillis()+threadid;
+        return ""+System.currentTimeMillis()+ServerInfo.HOSTID+phone_number+threadid;
     }
     //求助者在线的时候进行任务确认
     public synchronized boolean acktask(ServiceServer helper,String taskid,
