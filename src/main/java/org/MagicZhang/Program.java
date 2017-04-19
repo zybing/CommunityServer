@@ -1,6 +1,7 @@
 package org.MagicZhang;
 
 import org.MagicZhang.Control.FileCenter;
+import org.MagicZhang.Control.LoginCenter;
 import org.MagicZhang.Control.ServiceCenter;
 
 import java.io.File;
@@ -16,5 +17,7 @@ public class Program {
         _servicecenter.start();
         FileCenter _filecenter=new FileCenter();
         _filecenter.start();
+        LoginCenter _logincenter=new LoginCenter();
+        _logincenter.start();
     }
 }

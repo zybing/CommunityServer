@@ -128,6 +128,9 @@ public class ServiceServer {
         else if(type==Logic.helper_finish){
             return Logic.helper_finish(this);
         }
+        else if(type==Logic.catchaudio){
+            return Logic.catchaudio();
+        }
         return null;
     }
     //关闭socket链接

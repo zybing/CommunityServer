@@ -28,11 +28,12 @@ public class Logic {
     public final static int request=4;
     public final static int order=5;
     public final static int notification=6;
-    public final static int ack=7;
-    public final static int sys_finish1=8;
-    public final static int sys_finish2=9;
-    public final static int requester_finish=10;
-    public final static int helper_finish=11;
+    public final static int catchaudio=7;
+    public final static int ack=8;
+    public final static int sys_finish1=9;
+    public final static int sys_finish2=10;
+    public final static int requester_finish=11;
+    public final static int helper_finish=12;
     //user_type
     public final static int requester=1;
     public final static int volunteer=2;
@@ -423,6 +424,17 @@ public class Logic {
                 num+=requesttime.length;
                 byte[] identityb=Converter.getBytes(identity);
                 num+=8;
+                byte[] fileip=null;
+                byte[] fileiplen=null;
+                byte[] fileport=null;
+                if(identity>0){
+                    fileip=Converter.getBytes(ServerInfo.FILEHOSTNAME);
+                    fileiplen=Converter.getBytes(fileip.length);
+                    num+=fileiplen.length;
+                    num+=fileip.length;
+                    fileport=Converter.getBytes(ServerInfo.FILEPORT);
+                    num+=fileport.length;
+                }
                 result=new byte[num];
                 System.arraycopy(_type,0,result,0,4);
                 System.arraycopy(taskidlen,0,result,4,taskidlen.length);
@@ -434,6 +446,14 @@ public class Logic {
                 System.arraycopy(requesttime,0,result,index,requesttime.length);
                 index+=requesttime.length;
                 System.arraycopy(identityb,0,result,index,identityb.length);
+                if(identity>0){
+                    index+=identityb.length;
+                    System.arraycopy(fileiplen,0,result,index,fileiplen.length);
+                    index+=fileiplen.length;
+                    System.arraycopy(fileip,0,result,index,fileip.length);
+                    index+=fileip.length;
+                    System.arraycopy(fileport,0,result,index,fileport.length);
+                }
                 thread.tasklock.lock();
                 try{
                     thread.currenttask=new Sql_task(taskid);
@@ -534,8 +554,27 @@ public class Logic {
         result=Converter.getBytes(Logic.helper_finish);
         return result;
     }
-    public static final byte[] requesteraudio(String taskid,ServiceServer helper){
+    public static final byte[] catchaudio(){
 
-        return null;
+        byte[] result=null;
+        int num=0;
+        byte[] type=Converter.getBytes(Logic.catchaudio);
+        num+=type.length;
+        byte[] fileip=Converter.getBytes(ServerInfo.FILEHOSTNAME);
+        byte[] fileiplen=Converter.getBytes(fileip.length);
+        num+=fileiplen.length;
+        num+=fileip.length;
+        byte[] fileport=Converter.getBytes(ServerInfo.FILEPORT);
+        num+=fileport.length;
+        result=new byte[num];
+        int index=0;
+        System.arraycopy(type,0,result,index,type.length);
+        index+=type.length;
+        System.arraycopy(fileiplen,0,result,index,fileiplen.length);
+        index+=fileiplen.length;
+        System.arraycopy(fileip,0,result,index,fileip.length);
+        index+=fileip.length;
+        System.arraycopy(fileport,0,result,index,fileport.length);
+        return result;
     }
 }

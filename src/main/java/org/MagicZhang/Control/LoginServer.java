@@ -40,6 +40,7 @@ public class LoginServer extends Thread{
                                 (byte)0,"0",0));
                         out.write(Converter.getBytes(Logic.login));
                         out.write(Converter.getBytes(Logic.loginfailed));
+                        out.flush();
                         Log.log("add unregisster user "+phone_number);
                         Log.log("login failed"+phone_number+this);
                     }
@@ -48,12 +49,10 @@ public class LoginServer extends Thread{
                             byte[] ip=Converter.getBytes(ServerInfo.HOSTNAME);
                             byte[] iplen=Converter.getBytes(ip.length);
                             byte[] port=Converter.getBytes(ServerInfo.PORT);
-                            byte[] portlen=Converter.getBytes(port.length);
                             out.write(Converter.getBytes(Logic.login));
                             out.write(Converter.getBytes(Logic.loginsuccess));
                             out.write(iplen);
                             out.write(ip);
-                            out.write(portlen);
                             out.write(port);
                             out.flush();
                             Log.log("login success"+phone_number+this);
@@ -61,6 +60,7 @@ public class LoginServer extends Thread{
                         else{
                             out.write(Converter.getBytes(Logic.login));
                             out.write(Converter.getBytes(Logic.loginfailed));
+                            out.flush();
                             Log.log("login failed"+phone_number+this);
                         }
                     }
