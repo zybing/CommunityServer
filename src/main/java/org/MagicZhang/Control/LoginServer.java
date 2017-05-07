@@ -6,6 +6,7 @@ import org.MagicZhang.Log;
 import org.MagicZhang.Logic.Logic;
 import org.MagicZhang.Modle.user;
 import org.MagicZhang.ServerInfo;
+import org.MagicZhang.Sql.Sql_basic_info;
 import org.MagicZhang.Sql.Sql_user;
 
 import java.io.*;
@@ -49,11 +50,32 @@ public class LoginServer extends Thread{
                             byte[] ip=Converter.getBytes(ServerInfo.HOSTNAME);
                             byte[] iplen=Converter.getBytes(ip.length);
                             byte[] port=Converter.getBytes(ServerInfo.PORT);
+                            Sql_basic_info _sqlbasicinfo=new Sql_basic_info(0);
+                            byte[] version_requester=Converter.getBytes(
+                                    _sqlbasicinfo._basic_info.version_requester());
+                            byte[] versionrlen=Converter.getBytes(version_requester.length);
+                            byte[] version_helper=Converter.getBytes(
+                                    _sqlbasicinfo._basic_info.version_helper());
+                            byte[] versionhlen=Converter.getBytes(version_helper.length);
+                            byte[] url_requester=Converter.getBytes(
+                                    _sqlbasicinfo._basic_info.url_requester());
+                            byte[] urlrlen=Converter.getBytes(url_requester.length);
+                            byte[] url_helper=Converter.getBytes(
+                                    _sqlbasicinfo._basic_info.url_helper());
+                            byte[] urlhlen=Converter.getBytes(url_helper.length);
                             out.write(Converter.getBytes(Logic.login));
                             out.write(Converter.getBytes(Logic.loginsuccess));
                             out.write(iplen);
                             out.write(ip);
                             out.write(port);
+                            out.write(versionrlen);
+                            out.write(version_requester);
+                            out.write(versionhlen);
+                            out.write(version_helper);
+                            out.write(urlrlen);
+                            out.write(url_requester);
+                            out.write(urlhlen);
+                            out.write(url_helper);
                             out.flush();
                             Log.log("login success"+phone_number+this);
                         }

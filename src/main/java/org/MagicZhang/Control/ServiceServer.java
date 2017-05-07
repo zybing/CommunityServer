@@ -103,6 +103,7 @@ public class ServiceServer {
             String taskid=SocketReader.readString(in,tmp);
             tmp=SocketReader.readInt(in);
             String request_phonenumber=SocketReader.readString(in,tmp);
+            request_phonenumber+="a";
             tmp=SocketReader.readInt(in);
             String location=SocketReader.readString(in,tmp);
             ServiceServer requester=ServiceCenter.getinstance().online_users.get(request_phonenumber);
@@ -292,7 +293,9 @@ public class ServiceServer {
                                 }
                                 byte[] result = Logic.notification(currenttask._task);
                                 boolean tmp = ServiceCenter.getinstance().sendnotification(result,
-                                        currenttask._task.request_location(), currenttask._task);
+                                        currenttask._task.request_location(), currenttask._task
+                                ,_sql_user._user.phone_number().substring(0,_sql_user.
+                                                _user.phone_number().length()-1));
                                 if (tmp) {
                                     currenttask.update_status(Status.publish);
                                     currenttask.setOrdertime(System.currentTimeMillis());

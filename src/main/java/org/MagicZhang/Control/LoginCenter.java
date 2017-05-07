@@ -2,6 +2,7 @@ package org.MagicZhang.Control;
 
 import org.MagicZhang.Log;
 import org.MagicZhang.ServerInfo;
+import org.MagicZhang.Sql.Sql_basic_info;
 
 import java.io.File;
 import java.io.IOException;

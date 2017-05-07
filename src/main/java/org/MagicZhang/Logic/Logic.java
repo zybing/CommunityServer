@@ -151,7 +151,12 @@ public class Logic {
                 taskidlen=Converter.getBytes(taskid.length);
                 num+=taskidlen.length;
                 num+=taskid.length;
-                request_phone_number=Converter.getBytes(_task.request_phone_number());
+                String requesterphonenumber=_task.request_phone_number();
+                if(requesterphonenumber.length()>1){
+                    requesterphonenumber=requesterphonenumber.
+                            substring(0,requesterphonenumber.length()-1);
+                }
+                request_phone_number=Converter.getBytes(requesterphonenumber);
                 request_phone_numberlen=Converter.getBytes(request_phone_number
                         .length);
                 num+=request_phone_numberlen.length;
@@ -161,7 +166,12 @@ public class Logic {
                 request_usernamelen=Converter.getBytes(request_username.length);
                 num+=request_usernamelen.length;
                 num+=request_username.length;
-                volunteer_phone_number=Converter.getBytes(_task.volunteer_phone_number());
+                String volunteerphonenumber=_task.volunteer_phone_number();
+                if(volunteerphonenumber.length()>1){
+                    volunteerphonenumber=volunteerphonenumber.
+                            substring(0,volunteerphonenumber.length()-1);
+                }
+                volunteer_phone_number=Converter.getBytes(volunteerphonenumber);
                 volunteer_phone_numberlen=Converter.getBytes(volunteer_phone_number
                         .length);
                 num+=volunteer_phone_numberlen.length;
@@ -296,7 +306,12 @@ public class Logic {
             taskidlen=Converter.getBytes(taskid.length);
             num+=taskidlen.length;
             num+=taskid.length;
-            request_phone_number=Converter.getBytes(_task.request_phone_number());
+            String requesterphonenumber=_task.request_phone_number();
+            if(requesterphonenumber.length()>1){
+                requesterphonenumber=requesterphonenumber.
+                        substring(0,requesterphonenumber.length()-1);
+            }
+            request_phone_number=Converter.getBytes(requesterphonenumber);
             request_phone_numberlen=Converter.getBytes(request_phone_number
                         .length);
             num+=request_phone_numberlen.length;
@@ -306,7 +321,12 @@ public class Logic {
             request_usernamelen=Converter.getBytes(request_username.length);
             num+=request_usernamelen.length;
             num+=request_username.length;
-            volunteer_phone_number=Converter.getBytes(_task.volunteer_phone_number());
+            String volunteerphonenumber=_task.volunteer_phone_number();
+            if(volunteerphonenumber.length()>1){
+                volunteerphonenumber=volunteerphonenumber.
+                        substring(0,volunteerphonenumber.length()-1);
+            }
+            volunteer_phone_number=Converter.getBytes(volunteerphonenumber);
             volunteer_phone_numberlen=Converter.getBytes(volunteer_phone_number
                         .length);
             num+=volunteer_phone_numberlen.length;
@@ -500,7 +520,12 @@ public class Logic {
         byte[] volunteer_username;
         int num=4;
         type=Converter.getBytes(Logic.ack);
-        volunteer_phonenumber=Converter.getBytes(helper._sql_user._user.phone_number());
+        String volunteerphonenumber=helper._sql_user._user.phone_number();
+        if(volunteerphonenumber.length()>1){
+            volunteerphonenumber=volunteerphonenumber.
+                    substring(0,volunteerphonenumber.length()-1);
+        }
+        volunteer_phonenumber=Converter.getBytes(volunteerphonenumber);
         volunteer_phonenumberlen=Converter.getBytes(volunteer_phonenumber.length);
         num+=volunteer_phonenumberlen.length;
         num+=volunteer_phonenumber.length;
@@ -535,7 +560,7 @@ public class Logic {
     public static final byte[] requester_finish(ServiceServer requester){
         byte[] result=null;
         requester.updatecurrenttaskinfo();
-        if(requester.currenttask._task.status()<Logic.sys_finish1){
+        if(requester.currenttask._task.status()<Status.requester_finish){
             requester._sql_user.update_taskid("0");
             requester._sql_user.update_requeststatus(Status.request_ui);
             requester.currenttask.update_status(Status.requester_finish);
@@ -546,7 +571,7 @@ public class Logic {
     public static final byte[] helper_finish(ServiceServer helper){
         byte[] result=null;
         helper.updatecurrenttaskinfo();
-        if(helper.currenttask._task.status()<Logic.sys_finish1){
+        if(helper.currenttask._task.status()<Status.requester_finish){
             helper._sql_user.update_taskid("0");
             helper._sql_user.update_helperstatus(Status.help_ui);
             helper.currenttask.update_status(Status.helper_finish);

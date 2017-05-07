@@ -87,7 +87,8 @@ public class ServiceCenter extends Thread{
         }
     }
     //下发通知的函数
-    public boolean sendnotification(byte[] result,String location,task _task){
+    public boolean sendnotification(byte[] result,String location,task _task
+    ,String requester_phonenumber){
         boolean send=false;
         String[] locations=location.split(",");
         Iterator<Map.Entry<String,ServiceServer>> iter=online_users.entrySet().iterator();
@@ -97,6 +98,11 @@ public class ServiceCenter extends Thread{
             String[] location2s=location2.split(",");
             ServiceServer tmp=entry.getValue();
             if(tmp._sql_user._user.user_type()== Logic.volunteer){
+                if(requester_phonenumber.equals(tmp._sql_user._user
+                        .phone_number().substring(0,tmp._sql_user._user
+                                .phone_number().length()-1))){
+                    continue;
+                }
                 if(Filter.cal_distance(Double.parseDouble(locations[1]),Double.parseDouble(locations[0])
                         ,Double.parseDouble(location2s[1]),Double.parseDouble(location2s[0]))
                         <Filter.distance){
