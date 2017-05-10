@@ -568,10 +568,12 @@ public class Logic {
             if(vserver!=null)
             {
                 vserver._sql_user.update_helperstatus(Status.help_ui);
+                vserver._sql_user.update_taskid("0");
                 vserver.updatecurrenttaskinfo();
             }
             else{
                 Sql_user vuser=new Sql_user(vtmp);
+                vuser.update_taskid("0");
                 vuser.update_helperstatus(Status.help_ui);
             }
             requester._sql_user.update_taskid("0");
@@ -592,10 +594,12 @@ public class Logic {
             if(rserver!=null)
             {
                 rserver._sql_user.update_requeststatus(Status.request_ui);
+                rserver._sql_user.update_taskid("0");
                 rserver.updatecurrenttaskinfo();
             }
             else{
                 Sql_user ruser=new Sql_user(rtmp);
+                ruser.update_taskid("0");
                 ruser.update_helperstatus(Status.request_ui);
             }
             helper._sql_user.update_taskid("0");
