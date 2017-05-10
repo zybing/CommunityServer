@@ -310,6 +310,7 @@ public class ServiceServer {
                                 if (currenttask._task.status() == Status.unpublish)
                                 {
                                     currenttask.update_status(Status.system_finish1);
+                                    _sql_user.update_requeststatus(Status.request_ui);
                                     _sql_user.update_taskid("0");
                                     Log.log("task is end because sys_finish1");
                                     addmessage(Logic.sys_finish1());
@@ -331,6 +332,7 @@ public class ServiceServer {
                             if(currenttask._task.status()== Status.publish)
                             {
                                 currenttask.update_status(Status.system_finish2);
+                                _sql_user.update_requeststatus(Status.request_ui);
                                 _sql_user.update_taskid("0");
                                 addmessage(Logic.sys_finish2());
                             }

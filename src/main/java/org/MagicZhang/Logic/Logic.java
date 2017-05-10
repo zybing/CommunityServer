@@ -559,8 +559,21 @@ public class Logic {
 
     public static final byte[] requester_finish(ServiceServer requester){
         byte[] result=null;
-        requester.updatecurrenttaskinfo();
+        if(requester.currenttask._task==null)
+            requester.updatecurrenttaskinfo();
         if(requester.currenttask._task.status()<Status.requester_finish){
+            String vtmp=requester.currenttask._task.volunteer_phone_number();
+            ServiceServer vserver=ServiceCenter.getinstance().online_users.
+                    get(vtmp);
+            if(vserver!=null)
+            {
+                vserver._sql_user.update_helperstatus(Status.help_ui);
+                vserver.updatecurrenttaskinfo();
+            }
+            else{
+                Sql_user vuser=new Sql_user(vtmp);
+                vuser.update_helperstatus(Status.help_ui);
+            }
             requester._sql_user.update_taskid("0");
             requester._sql_user.update_requeststatus(Status.request_ui);
             requester.currenttask.update_status(Status.requester_finish);
@@ -570,8 +583,21 @@ public class Logic {
     }
     public static final byte[] helper_finish(ServiceServer helper){
         byte[] result=null;
-        helper.updatecurrenttaskinfo();
+        if(helper.currenttask._task==null)
+            helper.updatecurrenttaskinfo();
         if(helper.currenttask._task.status()<Status.requester_finish){
+            String rtmp=helper.currenttask._task.request_phone_number();
+            ServiceServer rserver=ServiceCenter.getinstance().online_users.
+                    get(rtmp);
+            if(rserver!=null)
+            {
+                rserver._sql_user.update_requeststatus(Status.request_ui);
+                rserver.updatecurrenttaskinfo();
+            }
+            else{
+                Sql_user ruser=new Sql_user(rtmp);
+                ruser.update_helperstatus(Status.request_ui);
+            }
             helper._sql_user.update_taskid("0");
             helper._sql_user.update_helperstatus(Status.help_ui);
             helper.currenttask.update_status(Status.helper_finish);
