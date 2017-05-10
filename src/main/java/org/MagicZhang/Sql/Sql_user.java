@@ -219,8 +219,8 @@ public class Sql_user {
         try {
             conn=jdbcUtils.getConnection();
             st=conn.createStatement();
-            String sql="update users set current_taskid="+taskid
-                    +" where phone_number='"+phone_number+"'";
+            String sql="update users set current_taskid='"+taskid
+                    +"' where phone_number='"+phone_number+"'";
             int num=st.executeUpdate(sql);
             if(num>0){
                 issuccess=true;
