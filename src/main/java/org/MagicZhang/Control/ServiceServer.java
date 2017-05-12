@@ -95,6 +95,7 @@ public class ServiceServer {
                 fileurl="";
                 identity=SocketReader.readLong(in);
             }
+            Log.log("receive request from "+phone_number+this);
             return Logic.request(location,info,this,taskid,fileurl,identity);
         }
         else if(type==Logic.ack){//主动发的才需要进行身份识别，被动收的没办法
@@ -106,6 +107,7 @@ public class ServiceServer {
             request_phonenumber+="a";
             tmp=SocketReader.readInt(in);
             String location=SocketReader.readString(in,tmp);
+            Log.log(phone_number+"ack task from"+request_phonenumber+this);
             ServiceServer requester=ServiceCenter.getinstance().online_users.get(request_phonenumber);
             if(requester!=null){
                 boolean result=requester.acktask(this,taskid,location);
@@ -124,9 +126,11 @@ public class ServiceServer {
             }
         }
         else if(type==Logic.requester_finish){
+            Log.log("requester "+phone_number+"finish task"+this);
             return Logic.requester_finish(this);
         }
         else if(type==Logic.helper_finish){
+            Log.log("helper "+phone_number+"finish task"+this);
             return Logic.helper_finish(this);
         }
         else if(type==Logic.catchaudio){
@@ -191,7 +195,7 @@ public class ServiceServer {
                 }
             } catch (IOException e) {
                 Log.log("server:socketreadthread finished "
-                        + phone_number+" "+ServiceServer.this);
+                        + phone_number+" "+this);
             }
             catch(Exception e){
                 e.printStackTrace();
@@ -204,6 +208,10 @@ public class ServiceServer {
                         ServiceServer.this);
             }
             return null;
+        }
+        @Override
+        public String toString(){
+            return ServiceServer.this.toString();
         }
     }
     public class WriterThread implements Callable<Void>{
@@ -225,14 +233,14 @@ public class ServiceServer {
                     }
                     if(connection.isClosed())
                     {
-                        Log.log("writer break");
+                        Log.log("writer break"+phone_number+this);
                         break;
                     }
                     Thread.sleep(ServerInfo.writetime);
                 }
             } catch (IOException e) {
                 Log.log("server:socketwriterthread finished "
-                        + phone_number+" "+ServiceServer.this);
+                        + phone_number+" "+this);
             }
             catch(Exception e){
             }
@@ -244,6 +252,10 @@ public class ServiceServer {
                             ServiceServer.this);
             }
             return null;
+        }
+        @Override
+        public String toString(){
+            return ServiceServer.this.toString();
         }
     }
     public class TaskExecute implements  Callable<Void>{
@@ -264,7 +276,7 @@ public class ServiceServer {
                     }
                     if(connection.isClosed())
                     {
-                        Log.log("taskexecute break");
+                        Log.log("taskexecute break"+phone_number+this);
                         break;
                     }
                     Thread.sleep(ServerInfo.tasktime);
@@ -278,6 +290,10 @@ public class ServiceServer {
             }
             return null;
         }
+        @Override
+        public String toString(){
+            return ServiceServer.this.toString();
+        }
         public void requester_execute(){
             if(currenttask!=null&&currenttask._task!=null){
                 if(currenttask._task.status()== Status.unpublish){
@@ -288,7 +304,7 @@ public class ServiceServer {
                             if (rr == (byte) 1) {
                                 if(currenttask._task.request_info().equals("2")&&
                                         currenttask._task.fileurl().length()==0){
-                                    Log.log("file haven't been upload");
+                                    Log.log("file haven't been upload "+phone_number+this);
                                     return;
                                 }
                                 byte[] result = Logic.notification(currenttask._task);
@@ -304,7 +320,7 @@ public class ServiceServer {
                                     Log.log("task is published success"+phone_number
                                             +" "+this);
                                 } else {
-                                    Log.log("no user is filtered");
+                                    Log.log("no user is filtered"+phone_number+this);
                                 }
                             } else if (rr == (byte) 2) {
                                 if (currenttask._task.status() == Status.unpublish)
@@ -312,7 +328,7 @@ public class ServiceServer {
                                     currenttask.update_status(Status.system_finish1);
                                     _sql_user.update_requeststatus(Status.request_ui);
                                     _sql_user.update_taskid("0");
-                                    Log.log("task is end because sys_finish1");
+                                    Log.log("task is end because sys_finish1"+phone_number+this);
                                     addmessage(Logic.sys_finish1());
                                 }
                             }
@@ -334,6 +350,7 @@ public class ServiceServer {
                                 currenttask.update_status(Status.system_finish2);
                                 _sql_user.update_requeststatus(Status.request_ui);
                                 _sql_user.update_taskid("0");
+                                Log.log("task is end because sys_finish2"+phone_number+this);
                                 addmessage(Logic.sys_finish2());
                             }
                         }

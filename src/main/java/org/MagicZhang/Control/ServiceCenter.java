@@ -44,8 +44,7 @@ public class ServiceCenter extends Thread{
     //添加在线用户
     public void addonline_users(String phone_number,ServiceServer st){
         ServiceServer tmp=online_users.put(phone_number,st);
-        Log.log("add users "+phone_number+" "+st);
-        Log.log("login num:"+online_users.size());
+        Log.log("add users "+phone_number+" "+st+" login num:"+online_users.size());
         st._sql_user.update_isonline((byte)1);
         if(tmp!=null){
             if(!tmp.isfinish)
@@ -73,17 +72,14 @@ public class ServiceCenter extends Thread{
                 if(!st.isfinish)
                     st.finish();
                 online_users.remove(phone_number);
-                Log.log("remove users "+phone_number+" "+st);
-                Log.log("login num:"+online_users.size());
+                Log.log("remove users "+phone_number+" "+st+" login num:"+online_users.size());
             }
             else{
-                Log.log("user "+phone_number+" "+old_thread+" has been removed");
-                Log.log("login num:"+online_users.size());
+                Log.log("user "+phone_number+" "+old_thread+" has been removed"+" login num:"+online_users.size());
             }
         }
         else{
-            Log.log("no user is been removed");
-            Log.log("login num:"+online_users.size());
+            Log.log("no user is been removed"+" login num:"+online_users.size());
         }
     }
     //下发通知的函数
@@ -107,6 +103,8 @@ public class ServiceCenter extends Thread{
                         ,Double.parseDouble(location2s[1]),Double.parseDouble(location2s[0]))
                         <Filter.distance){
                     try {
+                        Log.log(requester_phonenumber+"'s task has been send to"+
+                                tmp._sql_user._user.phone_number());
                         tmp.addmessage(result);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
