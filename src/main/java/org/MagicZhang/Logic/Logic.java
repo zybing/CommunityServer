@@ -34,6 +34,7 @@ public class Logic {
     public final static int sys_finish2=10;
     public final static int requester_finish=11;
     public final static int helper_finish=12;
+    public final static int offline=13;
     //user_type
     public final static int requester=1;
     public final static int volunteer=2;
@@ -554,6 +555,11 @@ public class Logic {
     public static final byte[] sys_finish2(){
         byte[] result=null;
         result=Converter.getBytes(Logic.sys_finish2);
+        return result;
+    }
+    public static final byte[] offline(){
+        byte[] result=null;
+        result=Converter.getBytes(Logic.offline);
         return result;
     }
 

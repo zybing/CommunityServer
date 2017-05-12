@@ -374,6 +374,16 @@ public class ServiceServer {
             ServiceServer.this.finish();
         }
     }
+    //主动发送关闭消息
+    public void sendcloseinfo(byte[] data){
+        try {
+            _writerthread.out.write(data);
+            _writerthread.out.flush();
+            Log.log("send offline info to "+phone_number+" "+this);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
     //对每一个请求生物生成taskid
     public String gentaskid(){
         return ""+System.currentTimeMillis()+ServerInfo.HOSTID+phone_number+threadid;

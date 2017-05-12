@@ -50,6 +50,7 @@ public class ServiceCenter extends Thread{
             if(!tmp.isfinish)
             {
                 Log.log("try finish "+phone_number+" "+tmp);
+                tmp.sendcloseinfo(Logic.offline());
                 tmp.finish();
             }
             else{
@@ -59,7 +60,7 @@ public class ServiceCenter extends Thread{
         }
         else{
             Log.log("this phoner_number user " +
-                    "is first been added "+phone_number);
+                    "is first been added "+phone_number+st);
         }
     }
     //移除在线用户
