@@ -25,7 +25,10 @@ public class LoginCenter extends Thread{
                 try {
                     Socket connection = server.accept();
                     connection.setSoTimeout(ServerInfo.LOGINOUTTIME);
-                    login_pool.submit(new LoginServer(connection));
+                    LoginServer ltmp=new LoginServer(connection);
+                    Log.log("create connection loginserver "+
+                            connection.getInetAddress().getHostAddress()+" "+ltmp);
+                    login_pool.submit(ltmp);
                 } catch (IOException ex) {
                     ex.printStackTrace();
                 }

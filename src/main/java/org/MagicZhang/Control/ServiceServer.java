@@ -69,7 +69,7 @@ public class ServiceServer {
                 else
                     currenttask=new Sql_task("0");
             }
-            Log.log("receive loginfo"+phone_number+this);
+            Log.log("receive loginfo "+phone_number+" "+this);
             return Logic.login(phone_number,_sql_user._user,currenttask._task,
                     this);
         }
@@ -80,7 +80,7 @@ public class ServiceServer {
         }
         else if(type==Logic.updateinfo){
             updateonlinetime();
-            Log.log("receive updateinfo"+phone_number+this);
+            Log.log("receive updateinfo "+phone_number+" "+this);
             return Logic.updateinfo(phone_number,_sql_user._user,currenttask._task,
                     this,Logic.updateinfo);
         }
@@ -97,7 +97,7 @@ public class ServiceServer {
                 fileurl="";
                 identity=SocketReader.readLong(in);
             }
-            Log.log("receive request from "+phone_number+this);
+            Log.log("receive request from "+phone_number+" "+this);
             return Logic.request(location,info,this,taskid,fileurl,identity);
         }
         else if(type==Logic.ack){//主动发的才需要进行身份识别，被动收的没办法
@@ -109,7 +109,6 @@ public class ServiceServer {
             request_phonenumber+="a";
             tmp=SocketReader.readInt(in);
             String location=SocketReader.readString(in,tmp);
-            Log.log(phone_number+"ack task from"+request_phonenumber+this);
             ServiceServer requester=ServiceCenter.getinstance().online_users.get(request_phonenumber);
             if(requester!=null){
                 boolean result=requester.acktask(this,taskid,location);
@@ -120,19 +119,23 @@ public class ServiceServer {
                         e.printStackTrace();
                     }
                 }
+                Log.log(phone_number+"ack task "+result+
+                        " from "+request_phonenumber+" "+this);
                 return Logic.ack_helper(result);
             }
             else{
                 boolean result=acktask(taskid,this,location);
+                Log.log(phone_number+"ack task "+result+
+                        " from "+request_phonenumber+" "+this);
                 return Logic.ack_helper(result);
             }
         }
         else if(type==Logic.requester_finish){
-            Log.log("requester "+phone_number+"finish task"+this);
+            Log.log("requester "+phone_number+" finish task "+this);
             return Logic.requester_finish(this);
         }
         else if(type==Logic.helper_finish){
-            Log.log("helper "+phone_number+"finish task"+this);
+            Log.log("helper "+phone_number+" finish task "+this);
             return Logic.helper_finish(this);
         }
         else if(type==Logic.catchaudio){
@@ -235,7 +238,7 @@ public class ServiceServer {
                     }
                     if(connection.isClosed())
                     {
-                        Log.log("writer break"+phone_number+this);
+                        Log.log("writer break "+phone_number+" "+this);
                         break;
                     }
                     Thread.sleep(ServerInfo.writetime);
@@ -278,7 +281,7 @@ public class ServiceServer {
                     }
                     if(connection.isClosed())
                     {
-                        Log.log("taskexecute break"+phone_number+this);
+                        Log.log("taskexecute break "+phone_number+" "+this);
                         break;
                     }
                     Thread.sleep(ServerInfo.tasktime);
@@ -306,23 +309,24 @@ public class ServiceServer {
                             if (rr == (byte) 1) {
                                 if(currenttask._task.request_info().equals("2")&&
                                         currenttask._task.fileurl().length()==0){
-                                    Log.log("file haven't been upload "+phone_number+this);
+                                    Log.log("file haven't been upload "+phone_number+" "+this);
                                     return;
                                 }
                                 byte[] result = Logic.notification(currenttask._task);
                                 boolean tmp = ServiceCenter.getinstance().sendnotification(result,
                                         currenttask._task.request_location(), currenttask._task
                                 ,_sql_user._user.phone_number().substring(0,_sql_user.
-                                                _user.phone_number().length()-1));
+                                                _user.phone_number().length()-1),
+                                        ServiceServer.this);
                                 if (tmp) {
                                     currenttask.update_status(Status.publish);
                                     currenttask.setOrdertime(System.currentTimeMillis());
                                     byte[] data=Logic.order();
                                     addmessage(data);
-                                    Log.log("task is published success"+phone_number
+                                    Log.log("task is published success "+phone_number
                                             +" "+this);
                                 } else {
-                                    Log.log("no user is filtered"+phone_number+this);
+                                    Log.log("no user is filtered "+phone_number+" "+this);
                                 }
                             } else if (rr == (byte) 2) {
                                 if (currenttask._task.status() == Status.unpublish)
@@ -330,7 +334,7 @@ public class ServiceServer {
                                     currenttask.update_status(Status.system_finish1);
                                     _sql_user.update_requeststatus(Status.request_ui);
                                     _sql_user.update_taskid("0");
-                                    Log.log("task is end because sys_finish1"+phone_number+this);
+                                    Log.log("task is end because sys_finish1 "+phone_number+" "+this);
                                     addmessage(Logic.sys_finish1());
                                 }
                             }
@@ -352,7 +356,7 @@ public class ServiceServer {
                                 currenttask.update_status(Status.system_finish2);
                                 _sql_user.update_requeststatus(Status.request_ui);
                                 _sql_user.update_taskid("0");
-                                Log.log("task is end because sys_finish2"+phone_number+this);
+                                Log.log("task is end because sys_finish2 "+phone_number+" "+this);
                                 addmessage(Logic.sys_finish2());
                             }
                         }

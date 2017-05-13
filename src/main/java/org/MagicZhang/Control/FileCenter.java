@@ -27,7 +27,10 @@ public class FileCenter extends Thread{
                 try {
                     Socket connection = server.accept();
                     connection.setSoTimeout(ServerInfo.FILEOUTTIME);
-                    file_pool.submit(new FileServer(connection));
+                    FileServer ftmp=new FileServer(connection);
+                    Log.log("create connection fileserver "+
+                            connection.getInetAddress().getHostAddress()+" "+ftmp);
+                    file_pool.submit(ftmp);
                 } catch (IOException ex) {
                     ex.printStackTrace();
                 }

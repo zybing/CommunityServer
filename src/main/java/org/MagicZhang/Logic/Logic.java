@@ -62,7 +62,7 @@ public class Logic {
                         "0000-00-00 00:00:01","0,0"
                     ,0,0,(byte)0,(byte)0,
                         (byte)0,"0",0));
-                Log.log("add unregisster user "+phone_number);
+                Log.log("add unregisster user "+phone_number+" "+thread);
                 thread.finish();
             }
             else{
@@ -70,7 +70,7 @@ public class Logic {
             }
         }
         else{
-            Log.log("phone_number is null");
+            Log.log("phone_number is null"+" "+thread);
         }
         return result;
     }
@@ -492,6 +492,9 @@ public class Logic {
                 thread._sql_user.update_requestnumber(1);
                 thread._sql_user.update_requeststatus(Status.waiting_ui);
                 thread._sql_user.update_taskid(thread.currenttask._task.task_id());
+                Log.log("insert task success " +thread._sql_user._user.
+                        phone_number()+" "+thread.currenttask._task.task_id()+
+                " "+thread);
             }
         }
         return result;

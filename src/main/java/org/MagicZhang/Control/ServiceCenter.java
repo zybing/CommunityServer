@@ -55,12 +55,12 @@ public class ServiceCenter extends Thread{
             }
             else{
                 Log.log(phone_number+" "+
-                        tmp+"has been finished");
+                        tmp+" has been finished");
             }
         }
         else{
             Log.log("this phoner_number user " +
-                    "is first been added "+phone_number+st);
+                    "is first been added "+phone_number+" "+st);
         }
     }
     //移除在线用户
@@ -85,7 +85,7 @@ public class ServiceCenter extends Thread{
     }
     //下发通知的函数
     public boolean sendnotification(byte[] result,String location,task _task
-    ,String requester_phonenumber){
+    ,String requester_phonenumber,ServiceServer requester){
         boolean send=false;
         String[] locations=location.split(",");
         Iterator<Map.Entry<String,ServiceServer>> iter=online_users.entrySet().iterator();
@@ -104,8 +104,8 @@ public class ServiceCenter extends Thread{
                         ,Double.parseDouble(location2s[1]),Double.parseDouble(location2s[0]))
                         <Filter.distance){
                     try {
-                        Log.log(requester_phonenumber+"'s task has been send to"+
-                                tmp._sql_user._user.phone_number());
+                        Log.log(requester_phonenumber+"a's task has been send to "+
+                                tmp._sql_user._user.phone_number()+" "+requester);
                         tmp.addmessage(result);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
@@ -123,7 +123,8 @@ public class ServiceCenter extends Thread{
                     Socket connection = server.accept();
                     connection.setSoTimeout(ServerInfo.OUTTIME);
                     ServiceServer stmp=new ServiceServer(connection,_threadid.getnextid());
-                    Log.log("create connection "+stmp);
+                    Log.log("create connection "+
+                            connection.getInetAddress().getHostAddress()+" "+stmp);
                 } catch (IOException ex) {
                     ex.printStackTrace();
                 }

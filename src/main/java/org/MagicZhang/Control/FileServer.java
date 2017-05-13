@@ -70,6 +70,7 @@ public class FileServer extends Thread {
                 if(_tmp!=null){
                     _tmp.updatecurrenttaskinfo();
                 }
+                Log.log("upload file success "+taskid+" "+this);
             }
             else if(type==Logic.downloadfile){
                 int tmp=0;
@@ -92,6 +93,7 @@ public class FileServer extends Thread {
                     out.write(content, 0, length);
                     out.flush();
                 }
+                Log.log("download file success "+taskid+" "+this);
             }
         } catch (IOException e) {
             e.printStackTrace();
