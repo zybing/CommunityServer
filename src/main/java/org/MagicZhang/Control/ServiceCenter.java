@@ -95,11 +95,11 @@ public class ServiceCenter extends Thread{
             String[] location2s=location2.split(",");
             ServiceServer tmp=entry.getValue();
             if(tmp._sql_user._user.user_type()== Logic.volunteer){
-                if(requester_phonenumber.equals(tmp._sql_user._user
-                        .phone_number().substring(0,tmp._sql_user._user
-                                .phone_number().length()-1))){
-                    continue;
-                }
+//                if(requester_phonenumber.equals(tmp._sql_user._user
+//                        .phone_number().substring(0,tmp._sql_user._user
+//                                .phone_number().length()-1))){
+//                    continue;
+//                }
                 if(Filter.cal_distance(Double.parseDouble(locations[1]),Double.parseDouble(locations[0])
                         ,Double.parseDouble(location2s[1]),Double.parseDouble(location2s[0]))
                         <Filter.distance){
@@ -122,7 +122,8 @@ public class ServiceCenter extends Thread{
                 try {
                     Socket connection = server.accept();
                     connection.setSoTimeout(ServerInfo.OUTTIME);
-                    new ServiceServer(connection,_threadid.getnextid());
+                    ServiceServer stmp=new ServiceServer(connection,_threadid.getnextid());
+                    Log.log("create connection "+stmp);
                 } catch (IOException ex) {
                     ex.printStackTrace();
                 }

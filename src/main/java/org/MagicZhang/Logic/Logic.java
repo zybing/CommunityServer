@@ -270,11 +270,14 @@ public class Logic {
             }
             if(type==Logic.login)
             {
+                Log.log(phone_number+" login success begin add to online user list "
+                        +thread);
                 ServiceCenter myself= ServiceCenter.getinstance();
                 myself.addonline_users(phone_number,thread);
             }
         }
         else{
+            Log.log(phone_number+" is a unregister user "+thread);
             thread.finish();
         }
         return result;

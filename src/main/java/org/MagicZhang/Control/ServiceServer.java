@@ -69,6 +69,7 @@ public class ServiceServer {
                 else
                     currenttask=new Sql_task("0");
             }
+            Log.log("receive loginfo"+phone_number+this);
             return Logic.login(phone_number,_sql_user._user,currenttask._task,
                     this);
         }
@@ -79,6 +80,7 @@ public class ServiceServer {
         }
         else if(type==Logic.updateinfo){
             updateonlinetime();
+            Log.log("receive updateinfo"+phone_number+this);
             return Logic.updateinfo(phone_number,_sql_user._user,currenttask._task,
                     this,Logic.updateinfo);
         }
@@ -368,7 +370,7 @@ public class ServiceServer {
     //添加消息到队列
     public void addmessage(byte[] data) throws InterruptedException {
         if(messages.offer(data,ServerInfo.THRESHOLD, TimeUnit.MILLISECONDS)){
-            Log.log("msg has been add "+phone_number+" "+this);
+           // Log.log("msg has been add "+phone_number+" "+this);
         }
         else{
             ServiceServer.this.finish();

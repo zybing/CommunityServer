@@ -42,8 +42,8 @@ public class LoginServer extends Thread{
                         out.write(Converter.getBytes(Logic.login));
                         out.write(Converter.getBytes(Logic.loginfailed));
                         out.flush();
-                        Log.log("add unregisster user "+phone_number);
-                        Log.log("login failed"+phone_number+this);
+                        Log.log("logserver add unregisster user "+phone_number);
+                        Log.log("logserver login failed"+phone_number+this);
                     }
                     else{
                         if(sql_user._user.user_type()<Logic.unregister){
@@ -77,18 +77,18 @@ public class LoginServer extends Thread{
                             out.write(urlhlen);
                             out.write(url_helper);
                             out.flush();
-                            Log.log("login success"+phone_number+this);
+                            Log.log("logserver login success"+phone_number+this);
                         }
                         else{
                             out.write(Converter.getBytes(Logic.login));
                             out.write(Converter.getBytes(Logic.loginfailed));
                             out.flush();
-                            Log.log("login failed"+phone_number+this);
+                            Log.log("logserver login failed"+phone_number+this);
                         }
                     }
                 }
                 else{
-                    Log.log("phone_number is null");
+                    Log.log("logserve phone_number is null");
                 }
             }
         } catch (IOException e) {
