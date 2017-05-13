@@ -92,6 +92,7 @@ public class LoginServer extends Thread{
                 }
             }
         } catch (IOException e) {
+            Log.log("login server exception "+this);
             e.printStackTrace();
         }
         finally {

@@ -96,6 +96,7 @@ public class FileServer extends Thread {
                 Log.log("download file success "+taskid+" "+this);
             }
         } catch (IOException e) {
+            Log.log("file server exception "+this);
             e.printStackTrace();
         }
         finally {

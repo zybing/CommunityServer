@@ -124,7 +124,8 @@ public class ServiceCenter extends Thread{
                     connection.setSoTimeout(ServerInfo.OUTTIME);
                     ServiceServer stmp=new ServiceServer(connection,_threadid.getnextid());
                     Log.log("create connection "+
-                            connection.getInetAddress().getHostAddress()+" "+stmp);
+                            connection.getInetAddress().getHostAddress()+":"+
+                            connection.getPort()+" "+stmp);
                 } catch (IOException ex) {
                     ex.printStackTrace();
                 }

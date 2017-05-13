@@ -8,7 +8,7 @@ public class ServerInfo {
     public static final String HOSTID="00001";
 
     //有多个可请求的服务器，后面做成链表，或者每个服务器用不同的配置
-    public static final int PORT=8888;//请求端口号
+    public static final int PORT=8493;//请求端口号
     public static final String HOSTNAME="120.55.188.107";//请求主机号1
 //    public static final String HOSTNAME="localhost";//请求主机号1
     public static final int THREAD_NUM=200;//线程池的最大用户数
@@ -21,7 +21,7 @@ public class ServerInfo {
     public static final String root="/home/mhcl/server/";//服务器存储音频的位置
 //    public static final String root="D:\\community\\server\\";//服务器存储音频的位置
     //认为只有一个文件服务器
-    public static final int FILEPORT=9999;//文件服务器端口号
+    public static final int FILEPORT=9024;//文件服务器端口号
     public static final String FILEHOSTNAME="120.55.188.107";//文件服务器ip
 //    public static final String FILEHOSTNAME="localhost";//文件服务器ip
     public static final int FILEOUTTIME=10000;//上传文件的socket的超时连接时间
