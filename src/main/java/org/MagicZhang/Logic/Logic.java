@@ -425,7 +425,10 @@ public class Logic {
         if(thread._sql_user._user.user_type()==Logic.requester)
         {
             if(thread.currenttask==null||thread.currenttask._task==null||thread.currenttask.
-                _task.status()>=Status.requester_finish){
+                _task.status()>=Status.requester_finish||(thread._sql_user._user
+                    .status_requester()==Status.request_ui&&thread.currenttask._task.
+                    request_info().equals("2")&&thread.currenttask._task.
+            file_status()>Status.uploadfile)){
                 String request_phone_number=thread._sql_user._user.phone_number();
                 String request_time=sdf.format(new Date());
                 String volunteer_phone_number="";
@@ -434,7 +437,7 @@ public class Logic {
                 byte status=0;
                 task _task=new task(taskid,request_phone_number,request_time
                 ,location,taskinfo,volunteer_phone_number,ack_time,ack_location
-                ,status,0L,fileurl);
+                ,status,0L,fileurl,Status.nfile);
                 Sql_task.insert_task(_task);
                 int num=4;
                 byte[] _type=Converter.getBytes(Logic.request);
@@ -490,7 +493,11 @@ public class Logic {
                     thread.tasklock.unlock();
                 }
                 thread._sql_user.update_requestnumber(1);
-                thread._sql_user.update_requeststatus(Status.waiting_ui);
+                if(!thread.currenttask._task.request_info().equals("2"))
+                    thread._sql_user.update_requeststatus(Status.waiting_ui);
+                else{
+                    thread.currenttask.update_filestatus(Status.uploadfile);
+                }
                 thread._sql_user.update_taskid(thread.currenttask._task.task_id());
                 Log.log("insert task success " +thread._sql_user._user.
                         phone_number()+" "+thread.currenttask._task.task_id()+
@@ -574,6 +581,9 @@ public class Logic {
         if(requester.currenttask._task==null)
             requester.updatecurrenttaskinfo();
         if(requester.currenttask._task.status()<Status.requester_finish){
+            requester._sql_user.update_taskid("0");
+            requester._sql_user.update_requeststatus(Status.request_ui);
+            requester.currenttask.update_status(Status.requester_finish);
             String vtmp=requester.currenttask._task.volunteer_phone_number();
             ServiceServer vserver=ServiceCenter.getinstance().online_users.
                     get(vtmp);
@@ -588,9 +598,6 @@ public class Logic {
                 vuser.update_taskid("0");
                 vuser.update_helperstatus(Status.help_ui);
             }
-            requester._sql_user.update_taskid("0");
-            requester._sql_user.update_requeststatus(Status.request_ui);
-            requester.currenttask.update_status(Status.requester_finish);
         }
         result=Converter.getBytes(Logic.requester_finish);
         return result;
@@ -600,6 +607,9 @@ public class Logic {
         if(helper.currenttask._task==null)
             helper.updatecurrenttaskinfo();
         if(helper.currenttask._task.status()<Status.requester_finish){
+            helper._sql_user.update_taskid("0");
+            helper._sql_user.update_helperstatus(Status.help_ui);
+            helper.currenttask.update_status(Status.helper_finish);
             String rtmp=helper.currenttask._task.request_phone_number();
             ServiceServer rserver=ServiceCenter.getinstance().online_users.
                     get(rtmp);
@@ -614,9 +624,6 @@ public class Logic {
                 ruser.update_taskid("0");
                 ruser.update_helperstatus(Status.request_ui);
             }
-            helper._sql_user.update_taskid("0");
-            helper._sql_user.update_helperstatus(Status.help_ui);
-            helper.currenttask.update_status(Status.helper_finish);
         }
         result=Converter.getBytes(Logic.helper_finish);
         return result;

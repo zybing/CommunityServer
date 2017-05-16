@@ -156,6 +156,12 @@ public class ServiceServer {
             {
                 connection.close();
             }
+            if(_readthread.in!=null){
+                _readthread.in.close();
+            }
+            if(_writerthread.out!=null){
+                _writerthread.out.close();
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -195,6 +201,11 @@ public class ServiceServer {
                         } catch (InterruptedException e) {
                                 e.printStackTrace();
                         }
+                    }
+                    if(connection.isClosed())
+                    {
+                        Log.log("read break "+phone_number+" "+this);
+                        break;
                     }
                     Thread.sleep(ServerInfo.readtime);
                 }
@@ -308,8 +319,20 @@ public class ServiceServer {
                             byte rr = currenttask.publishtimeout(System.currentTimeMillis());
                             if (rr == (byte) 1) {
                                 if(currenttask._task.request_info().equals("2")&&
-                                        currenttask._task.fileurl().length()==0){
-                                    Log.log("file haven't been upload "+phone_number+" "+this);
+                                        currenttask._task.file_status()==Status.uploadfailed){
+                                    if (currenttask._task.status() == Status.unpublish)
+                                    {
+                                        currenttask.update_status(Status.system_finish1);
+                                        _sql_user.update_requeststatus(Status.request_ui);
+                                        _sql_user.update_taskid("0");
+                                        Log.log("task is end because sys_finish1 for upload file failed"+phone_number+" "+this);
+                                        addmessage(Logic.sys_finish1());
+                                        return;
+                                    }
+                                }
+                                if(currenttask._task.request_info().equals("2")&&
+                                        currenttask._task.file_status()!=Status.uploadsuccess){
+                                    Log.log("file haven't been upload success"+phone_number+" "+this);
                                     return;
                                 }
                                 byte[] result = Logic.notification(currenttask._task);

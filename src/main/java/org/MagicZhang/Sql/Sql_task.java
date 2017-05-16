@@ -15,6 +15,7 @@ public class Sql_task {
     public task _task;
     private static final int publishtime_interval=1000;
     private static final int publishnum_threshold=30;
+    public static final int fileup_time=20000;
     private long publishtime;
     private int publishdetectnum;
     private long ordertime;
@@ -70,7 +71,7 @@ public class Sql_task {
                         ,rs.getString(5),rs.getString(6)
                         ,rs.getString(7),rs.getString(8)
                         ,rs.getByte(9),rs.getLong(10),
-                        rs.getString(11));
+                        rs.getString(11),rs.getByte(12));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -316,6 +317,30 @@ public class Sql_task {
             if(num>0){
                 issuccess=true;
                 _task.ack_time_$eq(fileurl);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }finally{
+            jdbcUtils.release(conn, st, rs);
+        }
+        return issuccess;
+    }
+    public boolean update_filestatus(Byte filestatus){
+        if(_task==null)
+            return false;
+        Connection conn=null;
+        Statement st=null;
+        ResultSet rs=null;
+        boolean issuccess=false;
+        try {
+            conn=jdbcUtils.getConnection();
+            st=conn.createStatement();
+            String sql="update tasks set file_status='"+filestatus+
+                    "' where task_id='"+_task.task_id()+"'";
+            int num=st.executeUpdate(sql);
+            if(num>0){
+                issuccess=true;
+                _task.file_status_$eq(filestatus);
             }
         } catch (SQLException e) {
             e.printStackTrace();

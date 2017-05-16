@@ -105,8 +105,8 @@ public class Sql_user {
             conn=jdbcUtils.getConnection();
             st=conn.createStatement();
             int tmp_helpnumber=_user.help_number()+offset;
-            String sql="update users set help_number="+tmp_helpnumber
-                    +" where phone_number='"+phone_number+"'";
+            String sql="update users set help_number='"+tmp_helpnumber
+                    +"' where phone_number='"+phone_number+"'";
             int num=st.executeUpdate(sql);
             if(num>0){
                 issuccess=true;
@@ -128,8 +128,8 @@ public class Sql_user {
             conn=jdbcUtils.getConnection();
             st=conn.createStatement();
             int tmp_requestnumber=_user.request_number()+offset;
-            String sql="update users set request_number="+tmp_requestnumber
-                    +" where phone_number='"+phone_number+"'";
+            String sql="update users set request_number='"+tmp_requestnumber
+                    +"' where phone_number='"+phone_number+"'";
             int num=st.executeUpdate(sql);
             if(num>0){
                 issuccess=true;
@@ -150,8 +150,8 @@ public class Sql_user {
         try {
             conn=jdbcUtils.getConnection();
             st=conn.createStatement();
-            String sql="update users set status_requester="+status
-                    +" where phone_number='"+phone_number+"'";
+            String sql="update users set status_requester='"+status
+                    +"' where phone_number='"+phone_number+"'";
             int num=st.executeUpdate(sql);
             if(num>0){
                 issuccess=true;
@@ -174,8 +174,8 @@ public class Sql_user {
         try {
             conn=jdbcUtils.getConnection();
             st=conn.createStatement();
-            String sql="update users set isonline="+isonline
-                    +" where phone_number='"+phone_number+"'";
+            String sql="update users set isonline='"+isonline
+                    +"' where phone_number='"+phone_number+"'";
             int num=st.executeUpdate(sql);
             if(num>0){
                 issuccess=true;
@@ -197,8 +197,8 @@ public class Sql_user {
             conn=jdbcUtils.getConnection();
             st=conn.createStatement();
             int value=_user.online_time()+onlinetime;
-            String sql="update users set online_time="+value
-                    +" where phone_number='"+phone_number+"'";
+            String sql="update users set online_time='"+value
+                    +"' where phone_number='"+phone_number+"'";
             int num=st.executeUpdate(sql);
             if(num>0){
                 issuccess=true;
@@ -262,8 +262,8 @@ public class Sql_user {
         try {
             conn=jdbcUtils.getConnection();
             st=conn.createStatement();
-            String sql="update users set status_helper="+status
-                    +" where phone_number='"+phone_number+"'";
+            String sql="update users set status_helper='"+status
+                    +"' where phone_number='"+phone_number+"'";
             int num=st.executeUpdate(sql);
             if(num>0){
                 issuccess=true;

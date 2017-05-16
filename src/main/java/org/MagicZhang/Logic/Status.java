@@ -19,4 +19,9 @@ public class Status {
     //helper_status
     public final static byte help_ui=0;
     public final static byte detailinfo_ui=1;
+    //file_status
+    public final static byte nfile=0;
+    public final static byte uploadfile=1;
+    public final static byte uploadsuccess=2;
+    public final static byte uploadfailed=3;
 }
