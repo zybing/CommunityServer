@@ -428,7 +428,7 @@ public class Logic {
                 _task.status()>=Status.requester_finish||(thread._sql_user._user
                     .status_requester()==Status.request_ui&&thread.currenttask._task.
                     request_info().equals("2")&&thread.currenttask._task.
-            file_status()>Status.uploadfile)){
+            file_status()==Status.uploadfailed)){
                 String request_phone_number=thread._sql_user._user.phone_number();
                 String request_time=sdf.format(new Date());
                 String volunteer_phone_number="";
