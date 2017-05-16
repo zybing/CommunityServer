@@ -156,12 +156,6 @@ public class ServiceServer {
             {
                 connection.close();
             }
-            if(_readthread.in!=null){
-                _readthread.in.close();
-            }
-            if(_writerthread.out!=null){
-                _writerthread.out.close();
-            }
         } catch (IOException e) {
             e.printStackTrace();
         }

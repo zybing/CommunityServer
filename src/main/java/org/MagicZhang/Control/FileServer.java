@@ -178,10 +178,6 @@ public class FileServer extends Thread {
             try {
                 if(connection!=null)
                     connection.close();
-                if(in!=null)
-                    in.close();
-                if(out!=null)
-                    out.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
