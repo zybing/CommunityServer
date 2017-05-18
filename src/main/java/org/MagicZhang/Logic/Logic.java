@@ -622,7 +622,7 @@ public class Logic {
             else{
                 Sql_user ruser=new Sql_user(rtmp);
                 ruser.update_taskid("0");
-                ruser.update_helperstatus(Status.request_ui);
+                ruser.update_requeststatus(Status.request_ui);
             }
         }
         result=Converter.getBytes(Logic.helper_finish);
