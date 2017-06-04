@@ -38,7 +38,7 @@ public class LoginServer extends Thread{
                         Sql_user.insert_user(new user(phone_number,"user_name",(byte)4,
                                 "0000-00-00 00:00:01","0,0"
                                 ,0,0,(byte)0,(byte)0,
-                                (byte)0,"0",0));
+                                (byte)0,"0",0,"",""));
                         out.write(Converter.getBytes(Logic.login));
                         out.write(Converter.getBytes(Logic.loginfailed));
                         out.flush();

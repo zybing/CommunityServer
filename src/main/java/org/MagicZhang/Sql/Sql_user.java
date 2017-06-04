@@ -32,7 +32,8 @@ public class Sql_user {
                         ,rs.getInt(6),rs.getInt(7)
                         ,rs.getByte(8),rs.getByte(9)
                 ,rs.getByte(10),rs.getString(11),
-                        rs.getInt(12));
+                        rs.getInt(12),rs.getString(13),
+                        rs.getString(14));
             }
         } catch (SQLException e) {
             e.printStackTrace();

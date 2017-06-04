@@ -8,7 +8,8 @@ class user(val phone_number:String,var user_name:String,val user_type:Byte,var l
           ="0000-00-00 00:00:01",var last_updatelocation:String="0,0",
            var help_number:Int=0,var request_number:Int=0
           ,var isonline:Byte=0,var status_requester:Byte,var status_helper:Byte
-          ,var current_taskid:String,var online_time:Int) {
+          ,var current_taskid:String,var online_time:Int,val register_address:String
+          ,val register_unit:String) {
 
   //更新task中helpnumber的数值，offset是要增加的数值
   // ，如果offset是1就是帮助次数增加1

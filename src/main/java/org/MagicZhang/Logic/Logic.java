@@ -61,7 +61,7 @@ public class Logic {
                 Sql_user.insert_user(new user(phone_number,"user_name",(byte)4,
                         "0000-00-00 00:00:01","0,0"
                     ,0,0,(byte)0,(byte)0,
-                        (byte)0,"0",0));
+                        (byte)0,"0",0,"",""));
                 Log.log("add unregisster user "+phone_number+" "+thread);
                 thread.finish();
             }
@@ -99,6 +99,10 @@ public class Logic {
             byte[] usernamelen=Converter.getBytes(username.length);
             num+=usernamelen.length;
             num+=username.length;
+            byte[] register_address=Converter.getBytes(_user.register_address());
+            byte[] register_addresslen=Converter.getBytes(register_address.length);
+            num+=register_addresslen.length;
+            num+=register_address.length;
             byte[] online_time=Converter.getBytes(_user.online_time());
             num+=online_time.length;
             byte status_requester=_user.status_requester();
@@ -137,6 +141,11 @@ public class Logic {
                 System.arraycopy(usernamelen,0,result,13,4);
                 System.arraycopy(username,0,result,17,username.length);
                 index=17+username.length;
+                System.arraycopy(register_addresslen,0,result,index,4);
+                index+=4;
+                System.arraycopy(register_address,0,result,index,
+                        register_address.length);
+                index+=register_address.length;
                 System.arraycopy(online_time,0,result,index,4);
                 index+=4;
                 result[index++]=status_requester;
@@ -214,6 +223,11 @@ public class Logic {
                 System.arraycopy(usernamelen,0,result,13,4);
                 System.arraycopy(username,0,result,17,username.length);
                 index=17+username.length;
+                System.arraycopy(register_addresslen,0,result,index,4);
+                index+=4;
+                System.arraycopy(register_address,0,result,index,
+                        register_address.length);
+                index+=register_address.length;
                 System.arraycopy(online_time,0,result,index,4);
                 index+=4;
                 result[index++]=status_requester;
