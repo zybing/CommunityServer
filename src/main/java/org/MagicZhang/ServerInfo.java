@@ -35,4 +35,11 @@ public class ServerInfo {
     //只有一个登陆服务器
     public static int LOGINPORT=6666;//端口号
     public static int LOGINOUTTIME=10000;//登录的超时连接时间
+
+    //控制服务器
+    public static int CONTROLPORT=7777;
+    public static int CONTROLTIME=8000;
+
+    public static boolean allow_samephonenumber=false;
+    public static boolean same_registerunit=true;
 }

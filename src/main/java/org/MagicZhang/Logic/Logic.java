@@ -50,6 +50,13 @@ public class Logic {
     //登陆是否成功
     public final static int loginsuccess=0;
     public final static int loginfailed=1;
+
+    //控制服务器
+    public final static int control_filter=0;
+
+    //控制类的true and false
+    public final static byte control_true=(byte)0;
+    public final static byte control_false=(byte)1;
     //
     public static SimpleDateFormat sdf= new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     //未注册的用户不给予回复，客户端连接成功后为4，否则为0

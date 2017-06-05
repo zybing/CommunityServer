@@ -49,4 +49,18 @@ public class SocketReader {
         else
             return Converter.getLong(data);
     }
+    public static Double readDouble(DataInputStream in) throws IOException {
+        byte[] data=new byte[8];
+        int count=0;
+        int len;
+        while ((len=in.read(data,count,data.length-count))!=-1){
+            count+=len;
+            if(count==8)
+                break;
+        }
+        if(len==-1)
+            throw new IOException();
+        else
+            return Converter.getDouble(data);
+    }
 }

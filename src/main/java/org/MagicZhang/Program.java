@@ -1,10 +1,10 @@
 package org.MagicZhang;
 
+import org.MagicZhang.Control.ControlCenter;
 import org.MagicZhang.Control.FileCenter;
 import org.MagicZhang.Control.LoginCenter;
 import org.MagicZhang.Control.ServiceCenter;
 
-import java.io.File;
 
 /**
  * Created by sonof on 2017/2/23.
@@ -19,5 +19,7 @@ public class Program {
         _filecenter.start();
         LoginCenter _logincenter=new LoginCenter();
         _logincenter.start();
+        ControlCenter _controlcenter=new ControlCenter();
+        _controlcenter.start();
     }
 }
