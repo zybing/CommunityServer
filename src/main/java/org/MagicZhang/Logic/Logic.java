@@ -448,7 +448,7 @@ public class Logic {
             if(thread.currenttask==null||thread.currenttask._task==null||thread.currenttask.
                 _task.status()>=Status.requester_finish||(thread._sql_user._user
                     .status_requester()==Status.request_ui&&thread.currenttask._task.
-                    request_info().equals("2")&&thread.currenttask._task.
+                    request_info().substring(0,1).equals("2")&&thread.currenttask._task.
             file_status()==Status.uploadfailed)){
                 String request_phone_number=thread._sql_user._user.phone_number();
                 String request_time=sdf.format(new Date());
@@ -514,7 +514,7 @@ public class Logic {
                     thread.tasklock.unlock();
                 }
                 thread._sql_user.update_requestnumber(1);
-                if(!thread.currenttask._task.request_info().equals("2"))
+                if(!thread.currenttask._task.request_info().substring(0,1).equals("2"))
                     thread._sql_user.update_requeststatus(Status.waiting_ui);
                 else{
                     thread.currenttask.update_filestatus(Status.uploadfile);

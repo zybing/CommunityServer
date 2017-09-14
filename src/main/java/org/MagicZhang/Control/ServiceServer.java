@@ -93,7 +93,7 @@ public class ServiceServer {
             String taskid=this.gentaskid();
             String fileurl="";
             Long identity=0L;
-            if(info.equals("2")){
+            if(info.substring(0,1).equals("2")){
                 fileurl="";
                 identity=SocketReader.readLong(in);
             }
@@ -312,7 +312,8 @@ public class ServiceServer {
                         if(currenttask._task.status()== Status.unpublish){
                             byte rr = currenttask.publishtimeout(System.currentTimeMillis());
                             if (rr == (byte) 1) {
-                                if(currenttask._task.request_info().equals("2")&&
+                                if(currenttask._task.request_info().
+                                        substring(0,1).equals("2")&&
                                         currenttask._task.file_status()==Status.uploadfailed){
                                     if (currenttask._task.status() == Status.unpublish)
                                     {
@@ -324,7 +325,8 @@ public class ServiceServer {
                                         return;
                                     }
                                 }
-                                if(currenttask._task.request_info().equals("2")&&
+                                if(currenttask._task.request_info().
+                                        substring(0,1).equals("2")&&
                                         currenttask._task.file_status()!=Status.uploadsuccess){
                                     Log.log("file haven't been upload success"+phone_number+" "+this);
                                     return;
